@@ -5,6 +5,11 @@ Component::Component(const std::string& name, GameObject* gameObject) : m_name(n
 
 }
 
+Component::~Component()
+{
+	std::cout << "IM BEING DELETED NOOOOOOOOO" << std::endl;
+}
+
 std::string Component::GetName() const
 {
 	return m_name;

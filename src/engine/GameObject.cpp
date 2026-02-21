@@ -10,7 +10,7 @@ GameObject::GameObject(const GameObject& gameObject)
 {
 	for(auto i = 0; i < gameObject.m_components.size(); ++i)
 	{
-		this->AddComponent(gameObject.m_components[i].get());
+		this->CopyComponent(gameObject.m_components[i]);
 	}
 }
 
@@ -78,14 +78,24 @@ bool GameObject::AddComponent(Component* component)
 {
 	if(m_comp_map.count(component->GetName()) == 0)
 	{
-		//god this shit sucks
-		void* new_comp = malloc(sizeof(*component));
-		memcpy(new_comp, new_comp, sizeof(*component));
-		m_components.push_back(std::unique_ptr<Component>(static_cast<Component*>(new_comp)));
+		m_components.push_back(std::unique_ptr<Component>(component));
 		m_comp_map.insert({component->GetName(), component});
 		return true;
 	}
 	return false;
+}
+
+bool GameObject::CopyComponent(const std::unique_ptr<Component>& component)
+{
+	if(m_comp_map.count(component->GetName()) == 0)
+	{
+		std::unique_ptr new_comp(new Component(component));
+		m_components.push_back(new_comp);
+		m_comp_map.insert({component->GetName(), new_comp.get()});
+		return true;
+	}
+	return false;
+
 }
 
 Component* GameObject::GetTransform()

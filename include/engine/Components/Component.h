@@ -12,6 +12,7 @@ class Component
 		GameObject* gameObject;
 	public:
 		Component(const std::string& name, GameObject* gameObject);
+		~Component();
 		virtual void OnStart();
 		virtual void OnFixedIterate();
 		virtual void OnIterate() = 0;

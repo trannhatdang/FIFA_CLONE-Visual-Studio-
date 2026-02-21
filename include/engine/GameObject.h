@@ -24,6 +24,7 @@ class GameObject
 		const Component* GetComponent(int index) const;
 		const Component* GetComponent(const std::string& name) const;
 		bool AddComponent(Component* component);
+		bool CopyComponent(const std::unique_ptr<Component>& component);
 		Component* GetTransform();
 };
 
