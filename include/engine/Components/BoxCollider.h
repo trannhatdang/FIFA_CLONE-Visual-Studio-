@@ -18,7 +18,7 @@ class BoxCollider : public Component
 	private:
 		BColliderOff m_offset;
 	public:
-		BoxCollider(const std::shared_ptr<GameObject>& gameObject, const BColliderOff& offset);
+		BoxCollider(GameObject* gameObject, const BColliderOff& offset);
 		void OnStart();
 		void OnIterate();
 		void OnDraw(SDL_Renderer* renderer);

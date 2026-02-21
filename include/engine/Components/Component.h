@@ -9,9 +9,9 @@ class Component
 {
 	protected:
 		std::string m_name = "Component";
-		std::shared_ptr<GameObject> gameObject;
+		GameObject* gameObject;
 	public:
-		Component(const std::string& name, const std::shared_ptr<GameObject>& gameObject);
+		Component(const std::string& name, GameObject* gameObject);
 		virtual void OnStart();
 		virtual void OnFixedIterate();
 		virtual void OnIterate() = 0;

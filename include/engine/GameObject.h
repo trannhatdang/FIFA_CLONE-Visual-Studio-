@@ -8,10 +8,10 @@
 class GameObject
 {
 	private:
-		std::vector<std::shared_ptr<Component>> m_components;
+		std::vector<std::unique_ptr<Component>> m_components;
 		std::string m_name;
 		std::string m_tag;
-		std::unordered_map<std::string, std::shared_ptr<Component>> m_comp_map;
+		std::unordered_map<std::string, Component*> m_comp_map;
 	public:
 		GameObject(std::string name = "GameObject", std::string tag = "Entity");
 		GameObject(const GameObject& gameObject);
@@ -20,11 +20,11 @@ class GameObject
 		void OnFixedIterate();
 		void OnDraw(SDL_Renderer* renderer);
 		void OnEvent(SDL_Event* event);
-		void OnCollisionEnter(std::shared_ptr<GameObject> obj);
-		const std::shared_ptr<Component>& GetComponent(int index) const;
-		const std::shared_ptr<Component>& GetComponent(const std::string& name) const;
-		bool AddComponent(std::shared_ptr<Component> component);
-		std::shared_ptr<Component> GetTransform();
+		void OnCollisionEnter(GameObject* obj);
+		const Component* GetComponent(int index) const;
+		const Component* GetComponent(const std::string& name) const;
+		bool AddComponent(Component* component);
+		Component* GetTransform();
 };
 
 #endif

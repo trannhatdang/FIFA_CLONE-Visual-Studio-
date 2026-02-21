@@ -2,7 +2,7 @@
 
 static SDL_FRect playerSprRectArr[10];
 
-void GenerateGameScene(const std::shared_ptr<Scene>& gameScene)
+void GenerateGameScene(const std::unique_ptr<Scene>& gameScene)
 {
 	gameScene->AddGameObject();
 	auto gb = gameScene->GetGameObject();
@@ -16,5 +16,5 @@ void GenerateGameScene(const std::shared_ptr<Scene>& gameScene)
 		playerSprRectArr[i].h = 48;
 	}
 
-	gb->AddComponent(std::make_shared<SpriteRenderer>(gb, gameScene->GetRenderer(), GetPlayerSpriteSheet(), playerSprRectArr[0], playerSprRectArr[0]));
+	gb->AddComponent(std::make_unique<SpriteRenderer>(gb, gameScene->GetRenderer(), GetPlayerSpriteSheet(), playerSprRectArr[0], playerSprRectArr[0]));
 }	

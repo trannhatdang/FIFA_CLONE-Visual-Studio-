@@ -5,6 +5,6 @@
 #include "engine/Components/SpriteRenderer.h"
 #include "Config.h"
 
-void GenerateGameScene(const std::shared_ptr<Scene>& gameScene);
+void GenerateGameScene(const std::unique_ptr<Scene>& gameScene);
 
 #endif

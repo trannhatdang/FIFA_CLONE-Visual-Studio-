@@ -11,8 +11,8 @@
 
 static SDL_Renderer* renderer = nullptr;
 static SDL_Window* window = nullptr;
-static std::shared_ptr<Scene> scenes[10];
-static std::shared_ptr<Scene> currScene;
+static std::unique_ptr<Scene> scenes[10];
+static Scene* currScene;
 static std::chrono::milliseconds frametime;
 static std::chrono::time_point last_iterate_point = std::chrono::system_clock::now();
 SDL_Texture* texture;
@@ -20,7 +20,7 @@ int texture_w, texture_h;
 
 static void ChangeScene(int index)
 {
-	currScene = scenes[index];
+	currScene = scenes[index].get();
 }
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char** argv)
@@ -41,27 +41,14 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char** argv)
 
 	SDL_SetRenderLogicalPresentation(renderer, GetWindowWidth(), GetWindowHeight(), SDL_LOGICAL_PRESENTATION_LETTERBOX);
 
-	scenes[0] = std::make_shared<Scene>("IntroScene", &ChangeScene, renderer, window);
-	scenes[1] = std::make_shared<Scene>("MenuScene", &ChangeScene, renderer, window);
-	scenes[2] = std::make_shared<Scene>("GameScene", &ChangeScene, renderer, window);
-	scenes[3] = std::make_shared<Scene>("OptionsScene", &ChangeScene, renderer, window);
+	scenes[0] = std::make_unique<Scene>("IntroScene", &ChangeScene, renderer, window);
+	scenes[1] = std::make_unique<Scene>("MenuScene", &ChangeScene, renderer, window);
+	scenes[2] = std::make_unique<Scene>("GameScene", &ChangeScene, renderer, window);
+	scenes[3] = std::make_unique<Scene>("OptionsScene", &ChangeScene, renderer, window);
 
 	GenerateGameScene(scenes[2]);
 
 	ChangeScene(2); //Straight into game scene
-	
-	/*SDL_Surface* surface = SDL_LoadPNG(GetPlayerSpriteSheet().c_str());
-	if(!surface)
-	{
-		SDL_Log("Could not create surface for texture creation: %s", SDL_GetError());
-		return SDL_APP_FAILURE;
-	}
-
-	texture_w = surface->w;
-	texture_h = surface->h;
-
-	texture = SDL_CreateTextureFromSurface(renderer, surface);
-	SDL_DestroySurface(surface);*/
 
 	return SDL_APP_CONTINUE;
 }
@@ -78,19 +65,6 @@ SDL_AppResult SDL_AppIterate(void *appstate)
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
 	SDL_RenderClear(renderer);
 
-	SDL_FRect srcrect;
-	srcrect.x = 0;
-	srcrect.y = 0;
-	srcrect.w = 32;
-	srcrect.h = 48;
-
-	SDL_FRect dstrect;
-	dstrect.x = 0;
-	dstrect.y = 0;
-	dstrect.w = 32;
-	dstrect.h = 48;
-
-	//SDL_RenderTexture(renderer, texture, &srcrect, &dstrect);
 	currScene->OnDraw(renderer);
 	SDL_RenderPresent(renderer);
 

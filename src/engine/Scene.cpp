@@ -11,41 +11,41 @@ Scene::~Scene()
 
 void Scene::OnStart()
 {
-	for(auto it: m_gameObjects)
+	for(auto i = 0; i < m_gameObjects.size(); ++i)
 	{
-		it->OnStart();
+		m_gameObjects[i]->OnStart();
 	}
 }
 
 void Scene::OnFixedIterate()
 {
-	for(auto it: m_gameObjects)
+	for(auto i = 0; i < m_gameObjects.size(); ++i)
 	{
-		it->OnFixedIterate();
+		m_gameObjects[i]->OnFixedIterate();
 	}
 }
 
 void Scene::OnIterate()
 {
-	for(auto it: m_gameObjects)
+	for(auto i = 0; i < m_gameObjects.size(); ++i)
 	{
-		it->OnIterate();
+		m_gameObjects[i]->OnIterate();
 	}
 }
 
 void Scene::OnDraw(SDL_Renderer* renderer)
 {
-	for(auto it: m_gameObjects)
+	for(auto i = 0; i < m_gameObjects.size(); ++i)
 	{
-		it->OnDraw(renderer);
+		m_gameObjects[i]->OnDraw(renderer);
 	}
 }
 
 void Scene::OnEvent(SDL_Event* event)
 {
-	for(auto it: m_gameObjects)
+	for(auto i = 0; i < m_gameObjects.size(); ++i)
 	{
-		it->OnEvent(event);
+		m_gameObjects[i]->OnEvent(event);
 	}
 }
 
@@ -54,9 +54,9 @@ void Scene::AddGameObject()
 	this->m_gameObjects.push_back(std::make_unique<GameObject>());
 }
 
-std::shared_ptr<GameObject>& Scene::GetGameObject(int index)
+GameObject* Scene::GetGameObject(int index)
 {
-	return this->m_gameObjects[index];
+	return this->m_gameObjects[index].get();
 }
 
 SDL_Renderer* Scene::GetRenderer() const 

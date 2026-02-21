@@ -1,6 +1,6 @@
 #include "engine/Components/BoxCollider.h"
 
-BoxCollider::BoxCollider(const std::shared_ptr<GameObject>& gameObject, const BColliderOff& offset) : Component("BoxCollider", gameObject), m_offset(offset) {}
+BoxCollider::BoxCollider(GameObject* gameObject, const BColliderOff& offset) : Component("BoxCollider", gameObject), m_offset(offset) {}
 
 void BoxCollider::OnStart()
 {

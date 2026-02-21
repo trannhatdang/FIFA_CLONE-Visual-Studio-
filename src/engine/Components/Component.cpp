@@ -1,6 +1,6 @@
 #include "engine/Components/Component.h"
 
-Component::Component(const std::string& name, const std::shared_ptr<GameObject>& gameObject) : m_name(name), gameObject(gameObject)
+Component::Component(const std::string& name, GameObject* gameObject) : m_name(name), gameObject(gameObject)
 {
 
 }
