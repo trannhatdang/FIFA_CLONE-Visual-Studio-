@@ -1,4 +1,3 @@
-
 #include "engine/DG_Texture.h"
 
 DG_Texture::DG_Texture(SDL_Texture* texture) : m_texture(texture)
@@ -21,7 +20,7 @@ SDL_Texture* CreateTextureFromPNG(SDL_Renderer* renderer, const std::string& fil
 	SDL_Surface* surface = SDL_LoadPNG(filepath.c_str());
 	if(!surface)
 	{
-		SDL_Log("Could not create surface for texture creation.");
+		SDL_Log("Could not create surface for texture creation :%s", SDL_GetError());
 		return nullptr;
 	}
 

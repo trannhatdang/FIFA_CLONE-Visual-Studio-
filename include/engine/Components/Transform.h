@@ -11,10 +11,7 @@ class Transform : public Component
 		Vector3 m_rot;
 	public:
 		Transform(const std::shared_ptr<GameObject>& gameObject, const Vector3& pos = {0, 0, 0}, const Vector3& rot = {0, 0, 0});
-		void OnStart();
 		void OnIterate();
-		void OnDraw(SDL_Renderer* renderer);
-		void OnEvent(SDL_Event* event);
 		const Vector3& GetPosition() const;
 		void SetPosition(const Vector3& pos);
 };

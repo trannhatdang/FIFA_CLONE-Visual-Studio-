@@ -5,22 +5,7 @@ Transform::Transform(const std::shared_ptr<GameObject>& gameObject, const Vector
 
 }
 
-void Transform::OnStart()
-{
-
-}
-
 void Transform::OnIterate()
-{
-
-}
-
-void Transform::OnDraw(SDL_Renderer* renderer)
-{
-
-}
-
-void Transform::OnEvent(SDL_Event* event)
 {
 
 }

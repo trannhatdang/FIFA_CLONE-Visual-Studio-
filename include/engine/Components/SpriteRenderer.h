@@ -7,7 +7,7 @@
 class SpriteRenderer : public Component
 {
 	private:
-		DG_Texture m_texture;
+		SDL_Texture* m_texture;
 		std::shared_ptr<SDL_FRect> m_srcrect;
 		std::shared_ptr<SDL_FRect> m_dstrect;
 	public:

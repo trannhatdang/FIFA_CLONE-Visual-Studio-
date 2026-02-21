@@ -17,6 +17,7 @@ static std::chrono::milliseconds frametime;
 static std::chrono::time_point last_iterate_point = std::chrono::system_clock::now();
 SDL_Texture* texture;
 int texture_w, texture_h;
+
 static void ChangeScene(int index)
 {
 	currScene = scenes[index];
@@ -40,16 +41,16 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char** argv)
 
 	SDL_SetRenderLogicalPresentation(renderer, GetWindowWidth(), GetWindowHeight(), SDL_LOGICAL_PRESENTATION_LETTERBOX);
 
-	scenes[0] = std::make_shared<Scene>("IntroScene");
-	scenes[1] = std::make_shared<Scene>("MenuScene");
-	scenes[2] = std::make_shared<Scene>("GameScene");
-	scenes[3] = std::make_shared<Scene>("OptionsScene");
+	scenes[0] = std::make_shared<Scene>("IntroScene", &ChangeScene, renderer, window);
+	scenes[1] = std::make_shared<Scene>("MenuScene", &ChangeScene, renderer, window);
+	scenes[2] = std::make_shared<Scene>("GameScene", &ChangeScene, renderer, window);
+	scenes[3] = std::make_shared<Scene>("OptionsScene", &ChangeScene, renderer, window);
 
 	GenerateGameScene(scenes[2]);
 
 	ChangeScene(2); //Straight into game scene
 	
-	SDL_Surface* surface = SDL_LoadPNG(GetPlayerSpriteSheet().c_str());
+	/*SDL_Surface* surface = SDL_LoadPNG(GetPlayerSpriteSheet().c_str());
 	if(!surface)
 	{
 		SDL_Log("Could not create surface for texture creation: %s", SDL_GetError());
@@ -60,7 +61,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char** argv)
 	texture_h = surface->h;
 
 	texture = SDL_CreateTextureFromSurface(renderer, surface);
-	SDL_DestroySurface(surface);
+	SDL_DestroySurface(surface);*/
 
 	return SDL_APP_CONTINUE;
 }
@@ -89,7 +90,7 @@ SDL_AppResult SDL_AppIterate(void *appstate)
 	dstrect.w = 32;
 	dstrect.h = 48;
 
-	SDL_RenderTexture(renderer, texture, &srcrect, &dstrect);
+	//SDL_RenderTexture(renderer, texture, &srcrect, &dstrect);
 	currScene->OnDraw(renderer);
 	SDL_RenderPresent(renderer);
 

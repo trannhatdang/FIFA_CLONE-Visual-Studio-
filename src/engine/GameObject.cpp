@@ -1,9 +1,8 @@
 #include "engine/GameObject.h"
 #include "engine/Components/Transform.h"
 
-GameObject::GameObject(std::string name)
+GameObject::GameObject(std::string name, std::string tag) : m_name(name), m_tag(tag)
 {
-	this->m_name = name;
 	this->AddComponent(std::make_shared<Transform>(std::shared_ptr<GameObject>(this)));
 }
 
@@ -67,19 +66,26 @@ const std::shared_ptr<Component>& GameObject::GetComponent(int index) const
 
 const std::shared_ptr<Component>& GameObject::GetComponent(const std::string& name) const
 {
-	int size = m_components.size();
-	for(int i = 0; i < size; ++i)
+	auto ans = this->m_comp_map.find(name);
+	if(ans == m_comp_map.end())
 	{
-		if(m_components[i]->GetName() == name)
-		{
-			return m_components[i];
-		}
+		return NULL;
 	}
-
-	return NULL;
+	return ans->second;
 }
 
-void GameObject::AddComponent(std::shared_ptr<Component> component)
+bool GameObject::AddComponent(std::shared_ptr<Component> component)
 {
-	m_components.push_back(component);
+	if(m_comp_map.count(component->GetName()) == 0)
+	{
+		m_components.push_back(component);
+		m_comp_map.insert({component->GetName(), component});
+		return true;
+	}
+	return false;
+}
+
+std::shared_ptr<Component> GameObject::GetTransform()
+{
+	return m_components[0];
 }
