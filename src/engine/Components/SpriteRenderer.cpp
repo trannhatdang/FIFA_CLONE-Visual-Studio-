@@ -38,8 +38,10 @@ void SpriteRenderer::OnDraw(SDL_Renderer* renderer, Vector3 CameraPos)
 	Vector3 pos = static_cast<Transform*>(this->gameObject->GetTransform())->GetPosition();
 	SDL_Rect viewport;
 	//god what would happen if we go 3d?
-	viewport.x = pos.x;
-	viewport.y = pos.y;
+	Vector3 cameraPos = GetCameraPos();
+
+	viewport.x = pos.x - cameraPos.x;
+	viewport.y = pos.y - cameraPos.y;
 	viewport.w = m_texture->w;
 	viewport.h = m_texture->h;
 

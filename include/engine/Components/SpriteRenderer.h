@@ -3,6 +3,7 @@
 
 #include "engine/Components/Component.h"
 #include "engine/dg_texture.h"
+#include "engine/main.h"
 
 class SpriteRenderer : public Component
 {
