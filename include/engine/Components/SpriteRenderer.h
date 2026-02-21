@@ -1,0 +1,22 @@
+#ifndef SPRITE_RENDERER_H_
+#define SPRITE_RENDERER_H_
+
+#include "engine/Components/Component.h"
+#include "engine/dg_texture.h"
+
+class SpriteRenderer : public Component
+{
+	private:
+		DG_Texture m_texture;
+		std::shared_ptr<SDL_FRect> m_srcrect;
+		std::shared_ptr<SDL_FRect> m_dstrect;
+	public:
+		SpriteRenderer(const std::shared_ptr<GameObject>& gameObject, SDL_Renderer* renderer, const std::string& filepath, SDL_FRect* srcrect, SDL_FRect* dstrect);
+		~SpriteRenderer();
+		void OnStart();
+		void OnIterate();
+		void OnDraw(SDL_Renderer* renderer);
+		void OnEvent(SDL_Event* event);
+};
+
+#endif

@@ -1,0 +1,5 @@
+CompileFlags:
+  Add:
+    - -ID:\\DH\\HK252\\FIFA_CLONE (Visual Studio)\\include
+    - -lSDL3
+    - -lSDL3_image

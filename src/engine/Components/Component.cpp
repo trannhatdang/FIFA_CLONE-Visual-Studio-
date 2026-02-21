@@ -1,0 +1,32 @@
+#include "engine/Components/Component.h"
+
+Component::Component(const std::string& name, const std::shared_ptr<GameObject>& gameObject) : m_name(name), gameObject(gameObject)
+{
+
+}
+
+std::string Component::GetName() const
+{
+	return m_name;
+}
+
+
+void Component::OnStart()
+{
+
+};
+
+void Component::OnFixedIterate()
+{
+
+};
+
+void Component::OnDraw(SDL_Renderer* renderer)
+{
+
+};
+
+void Component::OnEvent(SDL_Event* event)
+{
+
+};
