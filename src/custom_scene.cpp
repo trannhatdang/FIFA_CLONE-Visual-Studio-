@@ -6,6 +6,7 @@ void GenerateGameScene(const std::shared_ptr<Scene>& gameScene)
 {
 	gameScene->AddGameObject();
 	auto gb = gameScene->GetGameObject();
+	static_cast<Transform*>(gb->GetTransform().get())->SetPosition({500, 600, -2});
 
 	for(int i = 0; i < 10; ++i)
 	{

@@ -1,4 +1,5 @@
 #include "engine/Components/SpriteRenderer.h"
+#include "engine/GameObject.h"
 
 SpriteRenderer::SpriteRenderer(const std::shared_ptr<GameObject>& gameObject, SDL_Renderer* renderer, const std::string& filepath, SDL_FRect srcrect, SDL_FRect dstrect) : Component("SpriteRenderer", gameObject), m_srcrect(srcrect), m_dstrect(dstrect)
 {
@@ -29,8 +30,15 @@ void SpriteRenderer::OnStart()
 void SpriteRenderer::OnIterate() {};
 void SpriteRenderer::OnDraw(SDL_Renderer* renderer) 
 {
-	Vector3 pos = this->gameObject->GetTransform()->GetPosition();
-	SDL_FRect viewport;
+	//ugly but works, kinda, i'm not managing that!
+	Vector3 pos = static_cast<Transform*>(this->gameObject->GetTransform().get())->GetPosition();
+	SDL_Rect viewport;
+	//god what would happen if we go 3d?
+	viewport.x = pos.x;
+	viewport.y = pos.y;
+	viewport.w = m_texture->w;
+	viewport.h = m_texture->h;
+	SDL_SetRenderViewport(renderer, &viewport);
 	SDL_RenderTexture(renderer, m_texture, &m_srcrect, &m_dstrect);
 };
 void SpriteRenderer::OnEvent(SDL_Event* event) {};

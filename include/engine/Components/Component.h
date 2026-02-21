@@ -2,7 +2,8 @@
 #define COMPONENT_H_
 
 #include "engine/dg_engine_std.h"
-#include "engine/GameObject.h"
+#include <unordered_map>
+class GameObject;
 
 class Component
 {
