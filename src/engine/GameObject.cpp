@@ -54,7 +54,7 @@ void GameObject::OnEvent(SDL_Event* event)
 	}
 }
 
-void GameObject::OnCollisionEnter(GameObject obj)
+void GameObject::OnCollisionEnter(std::shared_ptr<GameObject> obj)
 {
 
 }

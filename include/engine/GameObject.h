@@ -3,7 +3,7 @@
 
 #include "Components/Component.h"
 #include <unordered_map>
-class Transform;
+#include "Components/Transform.h"
 
 class GameObject
 {
@@ -20,7 +20,7 @@ class GameObject
 		void OnFixedIterate();
 		void OnDraw(SDL_Renderer* renderer);
 		void OnEvent(SDL_Event* event);
-		void OnCollisionEnter(GameObject obj);
+		void OnCollisionEnter(std::shared_ptr<GameObject> obj);
 		const std::shared_ptr<Component>& GetComponent(int index) const;
 		const std::shared_ptr<Component>& GetComponent(const std::string& name) const;
 		bool AddComponent(std::shared_ptr<Component> component);

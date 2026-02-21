@@ -2,11 +2,11 @@
 #define COMPONENT_H_
 
 #include "engine/dg_engine_std.h"
-class GameObject;
+#include "engine/GameObject.h"
 
 class Component
 {
-	private:
+	protected:
 		std::string m_name = "Component";
 		std::shared_ptr<GameObject> gameObject;
 	public:

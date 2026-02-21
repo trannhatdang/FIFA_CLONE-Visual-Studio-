@@ -29,6 +29,8 @@ void SpriteRenderer::OnStart()
 void SpriteRenderer::OnIterate() {};
 void SpriteRenderer::OnDraw(SDL_Renderer* renderer) 
 {
+	Vector3 pos = this->gameObject->GetTransform()->GetPosition();
+	SDL_FRect viewport;
 	SDL_RenderTexture(renderer, m_texture, &m_srcrect, &m_dstrect);
 };
 void SpriteRenderer::OnEvent(SDL_Event* event) {};
