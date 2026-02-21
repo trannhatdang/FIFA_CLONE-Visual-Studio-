@@ -19,7 +19,7 @@ class SpriteRenderer : public Component
 		~SpriteRenderer();
 		void OnStart();
 		void OnIterate();
-		void OnDraw(SDL_Renderer* renderer, Vector3 CameraPos);
+		void OnDraw(SDL_Renderer* renderer);
 		void OnEvent(SDL_Event* event);
 		std::unique_ptr<Component> copy();
 };

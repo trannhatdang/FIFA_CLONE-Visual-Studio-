@@ -32,7 +32,7 @@ void SpriteRenderer::OnIterate()
 
 }
 
-void SpriteRenderer::OnDraw(SDL_Renderer* renderer, Vector3 CameraPos)
+void SpriteRenderer::OnDraw(SDL_Renderer* renderer)
 {
 	//ugly but works, kinda, i'm not managing that!
 	Vector3 pos = static_cast<Transform*>(this->gameObject->GetTransform())->GetPosition();

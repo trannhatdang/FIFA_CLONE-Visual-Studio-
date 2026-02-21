@@ -26,7 +26,7 @@ void Component::OnFixedIterate()
 
 };
 
-void Component::OnDraw(SDL_Renderer* renderer, Vector3 CameraPos)
+void Component::OnDraw(SDL_Renderer* renderer)
 {
 
 };

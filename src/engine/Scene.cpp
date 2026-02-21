@@ -33,11 +33,11 @@ void Scene::OnIterate()
 	}
 }
 
-void Scene::OnDraw(SDL_Renderer* renderer, Vector3 CameraPos)
+void Scene::OnDraw(SDL_Renderer* renderer)
 {
 	for(auto i = 0; i < m_gameObjects.size(); ++i)
 	{
-		m_gameObjects[i]->OnDraw(renderer, CameraPos);
+		m_gameObjects[i]->OnDraw(renderer);
 	}
 }
 

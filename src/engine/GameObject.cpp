@@ -38,11 +38,11 @@ void GameObject::OnIterate()
 	}
 }
 
-void GameObject::OnDraw(SDL_Renderer* renderer, Vector3 CameraPos)
+void GameObject::OnDraw(SDL_Renderer* renderer)
 {
 	for(auto i = 0; i < this->m_components.size(); ++i)
 	{
-		m_components[i]->OnDraw(renderer, CameraPos);
+		m_components[i]->OnDraw(renderer);
 	}
 }
 
@@ -87,11 +87,10 @@ bool GameObject::AddComponent(Component* component)
 
 bool GameObject::CopyComponent(const std::unique_ptr<Component>& component)
 {
-	if(m_comp_map.count(component->GetName()) == 0)
+	if (m_comp_map.count(component->GetName()) == 0)
 	{
-		auto new_comp = component->copy();
-		m_components.push_back(new_comp);
-		m_comp_map.insert({component->GetName(), new_comp.get()});
+		m_components.push_back(component->copy());
+		m_comp_map.insert({component->GetName(), m_components.back().get()});
 		return true;
 	}
 	return false;
