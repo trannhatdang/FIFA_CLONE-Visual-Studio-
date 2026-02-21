@@ -1,21 +1,19 @@
 #include "custom_scene.h"
 
+static SDL_FRect playerSprRectArr[10];
+
 void GenerateGameScene(const std::shared_ptr<Scene>& gameScene)
 {
 	gameScene->AddGameObject();
 	auto gb = gameScene->GetGameObject();
 
-	SDL_FRect* srcrect = new SDL_FRect;
-	srcrect->x = 0;
-	srcrect->y = 0;
-	srcrect->w = 32;
-	srcrect->h = 48;
+	for(int i = 0; i < 10; ++i)
+	{
+		playerSprRectArr[i].x = i*32;
+		playerSprRectArr[i].y = 0;
+		playerSprRectArr[i].w = 32;
+		playerSprRectArr[i].h = 48;
+	}
 
-	SDL_FRect* dstrect = new SDL_FRect;
-	dstrect->x = 0;
-	dstrect->y = 0;
-	dstrect->w = 32;
-	dstrect->h = 48;
-
-	gb->AddComponent(std::make_shared<SpriteRenderer>(gb, gameScene->GetRenderer(), GetPlayerSpriteSheet(), srcrect, dstrect));
+	gb->AddComponent(std::make_shared<SpriteRenderer>(gb, gameScene->GetRenderer(), GetPlayerSpriteSheet(), playerSprRectArr[0], playerSprRectArr[0]));
 }	

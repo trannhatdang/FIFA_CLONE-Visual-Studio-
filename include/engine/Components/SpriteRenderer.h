@@ -8,10 +8,10 @@ class SpriteRenderer : public Component
 {
 	private:
 		SDL_Texture* m_texture;
-		std::shared_ptr<SDL_FRect> m_srcrect;
-		std::shared_ptr<SDL_FRect> m_dstrect;
+		SDL_FRect m_srcrect;
+		SDL_FRect m_dstrect;
 	public:
-		SpriteRenderer(const std::shared_ptr<GameObject>& gameObject, SDL_Renderer* renderer, const std::string& filepath, SDL_FRect* srcrect, SDL_FRect* dstrect);
+		SpriteRenderer(const std::shared_ptr<GameObject>& gameObject, SDL_Renderer* renderer, const std::string& filepath, SDL_FRect srcrect, SDL_FRect dstrect);
 		~SpriteRenderer();
 		void OnStart();
 		void OnIterate();

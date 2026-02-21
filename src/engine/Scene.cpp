@@ -19,37 +19,33 @@ void Scene::OnStart()
 
 void Scene::OnFixedIterate()
 {
-	int size = m_gameObjects.size();
-	for(int i = 0; i < size; ++i)
+	for(auto it: m_gameObjects)
 	{
-		m_gameObjects[i]->OnFixedIterate();
+		it->OnFixedIterate();
 	}
 }
 
 void Scene::OnIterate()
 {
-	int size = m_gameObjects.size();
-	for(int i = 0; i < size; ++i)
+	for(auto it: m_gameObjects)
 	{
-		m_gameObjects[i]->OnIterate();
+		it->OnIterate();
 	}
 }
 
 void Scene::OnDraw(SDL_Renderer* renderer)
 {
-	int size = m_gameObjects.size();
-	for(int i = 0; i < size; ++i)
+	for(auto it: m_gameObjects)
 	{
-		m_gameObjects[i]->OnDraw(renderer);
+		it->OnDraw(renderer);
 	}
 }
 
 void Scene::OnEvent(SDL_Event* event)
 {
-	int size = m_gameObjects.size();
-	for(int i = 0; i < size; ++i)
+	for(auto it: m_gameObjects)
 	{
-		m_gameObjects[i]->OnEvent(event);
+		it->OnEvent(event);
 	}
 }
 
