@@ -12,8 +12,8 @@ class SpriteRenderer : public Component
 		SDL_FRect m_srcrect;
 		SDL_FRect m_dstrect;
 
-		const std::string filepath;
-		SDL_Renderer* renderer;
+		std::string filepath;
+		SDL_Renderer* m_renderer;
 	public:
 		SpriteRenderer(GameObject* gameObject, SDL_Renderer* renderer, const std::string& filepath, SDL_FRect srcrect, SDL_FRect dstrect);
 		~SpriteRenderer();

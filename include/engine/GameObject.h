@@ -21,11 +21,11 @@ class GameObject
 		void OnDraw(SDL_Renderer* renderer);
 		void OnEvent(SDL_Event* event);
 		void OnCollisionEnter(GameObject* obj);
-		const Component* GetComponent(int index) const;
-		const Component* GetComponent(const std::string& name) const;
+		Component* GetComponent(int index) const;
+		Component* GetComponent(const std::string& name) const;
 		bool AddComponent(Component* component);
 		bool CopyComponent(const std::unique_ptr<Component>& component);
-		Component* GetTransform();
+		Transform* GetTransform();
 };
 
 #endif

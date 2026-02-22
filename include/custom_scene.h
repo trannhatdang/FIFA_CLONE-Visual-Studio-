@@ -3,6 +3,7 @@
 
 #include "engine/scene.h"
 #include "engine/Components/SpriteRenderer.h"
+#include "engine/Components/Rigidbody.h"
 #include "Config.h"
 
 void GenerateGameScene(const std::unique_ptr<Scene>& gameScene);

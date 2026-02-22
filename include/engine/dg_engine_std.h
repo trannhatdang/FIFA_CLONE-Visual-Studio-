@@ -4,20 +4,9 @@
 #include <vector>
 #include <memory>
 #include <iostream>
+#include <cmath>
 #include <SDL3/SDL.h>
-
-typedef struct Vector2
-{
-	int x;
-	int y;
-} Vector2;
-
-typedef struct Vector3
-{
-	int x;
-	int y;
-	int z;
-} Vector3;
+#include "dg_vector.h"
 
 const int ON_COLLISION_ENTER_EVENT = SDL_RegisterEvents(1);
 

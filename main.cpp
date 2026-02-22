@@ -13,8 +13,8 @@ static SDL_Renderer* renderer = nullptr;
 static SDL_Window* window = nullptr;
 static std::unique_ptr<Scene> scenes[10];
 static Scene* currScene;
-static std::chrono::milliseconds frametime;
-static std::chrono::time_point last_iterate_point = std::chrono::system_clock::now();
+static std::chrono::milliseconds frametime = std::chrono::milliseconds(16);
+static std::chrono::time_point<std::chrono::system_clock> last_iterate_point = std::chrono::system_clock::now();
 SDL_Texture* texture;
 int texture_w, texture_h;
 

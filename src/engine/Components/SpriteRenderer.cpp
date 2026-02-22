@@ -1,7 +1,7 @@
 #include "engine/Components/SpriteRenderer.h"
 #include "engine/GameObject.h"
 
-SpriteRenderer::SpriteRenderer(GameObject* gameObject, SDL_Renderer* renderer, const std::string& filepath, SDL_FRect srcrect, SDL_FRect dstrect) : Component("SpriteRenderer", gameObject), m_srcrect(srcrect), m_dstrect(dstrect), filepath(filepath), renderer(renderer)
+SpriteRenderer::SpriteRenderer(GameObject* gameObject, SDL_Renderer* renderer, const std::string& filepath, SDL_FRect srcrect, SDL_FRect dstrect) : Component("SpriteRenderer", gameObject), m_srcrect(srcrect), m_dstrect(dstrect), filepath(filepath), m_renderer(renderer)
 {
 	SDL_Surface* surface = SDL_LoadPNG(filepath.c_str());
 	if(!surface)
@@ -56,5 +56,5 @@ void SpriteRenderer::OnEvent(SDL_Event* event)
 
 std::unique_ptr<Component> SpriteRenderer::copy()
 {
-	return std::make_unique<SpriteRenderer>(gameObject, renderer, filepath, m_srcrect, m_dstrect);
+	return std::make_unique<SpriteRenderer>(gameObject, m_renderer, filepath, m_srcrect, m_dstrect);
 }

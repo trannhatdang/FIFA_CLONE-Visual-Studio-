@@ -5,9 +5,13 @@ Transform::Transform(GameObject* gameObject, const Vector3& pos, const Vector3& 
 
 }
 
+void Transform::OnFixedIterate()
+{
+	//std::cout << m_pos << std::endl;
+}
+
 void Transform::OnIterate()
 {
-
 }
 
 std::unique_ptr<Component> Transform::copy()

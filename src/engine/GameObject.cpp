@@ -59,12 +59,12 @@ void GameObject::OnCollisionEnter(GameObject* obj)
 
 }
 
-const Component* GameObject::GetComponent(int index) const
+Component* GameObject::GetComponent(int index) const
 {
 	return m_components[index].get();
 }
 
-const Component* GameObject::GetComponent(const std::string& name) const
+Component* GameObject::GetComponent(const std::string& name) const
 {
 	auto ans = this->m_comp_map.find(name);
 	if(ans == m_comp_map.end())
@@ -97,7 +97,7 @@ bool GameObject::CopyComponent(const std::unique_ptr<Component>& component)
 
 }
 
-Component* GameObject::GetTransform()
+Transform* GameObject::GetTransform()
 {
-	return m_components[0].get();
+	return static_cast<Transform*>(m_components[0].get());
 }

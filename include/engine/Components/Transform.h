@@ -11,6 +11,7 @@ class Transform : public Component
 		Vector3 m_rot;
 	public:
 		Transform(GameObject* gameObject, const Vector3& pos = {0, 0, 0}, const Vector3& rot = {0, 0, 0});
+		void OnFixedIterate();
 		void OnIterate();
 		std::unique_ptr<Component> copy();
 		const Vector3& GetPosition() const;

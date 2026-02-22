@@ -10,11 +10,14 @@ void GenerateGameScene(const std::unique_ptr<Scene>& gameScene)
 
 	for(int i = 0; i < 10; ++i)
 	{
-		playerSprRectArr[i].x = i*32;
+		playerSprRectArr[i].x = (float)i*32;
 		playerSprRectArr[i].y = 0;
 		playerSprRectArr[i].w = 32;
 		playerSprRectArr[i].h = 48;
 	}
 
 	gb->AddComponent(new SpriteRenderer(gb, gameScene->GetRenderer(), GetPlayerSpriteSheet(), playerSprRectArr[0], playerSprRectArr[0]));
+	gb->AddComponent(new Rigidbody(gb));
+
+	static_cast<Rigidbody*>(gb->GetComponent("Rigidbody"))->AddForce({100, 0, 0});
 }	

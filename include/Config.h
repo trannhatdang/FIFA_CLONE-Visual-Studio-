@@ -3,8 +3,8 @@
 
 #include <string>
 
-const int GetWindowWidth();
-const int GetWindowHeight();
-const std::string GetPlayerSpriteSheet();
+int GetWindowWidth();
+int GetWindowHeight();
+std::string GetPlayerSpriteSheet();
 
 #endif
