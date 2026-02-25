@@ -23,9 +23,10 @@ class GameObject
 		void OnCollisionEnter(GameObject* obj);
 		Component* GetComponent(int index) const;
 		Component* GetComponent(const std::string& name) const;
+		Transform* GetTransform() const;
+		std::string GetName() const;
 		bool AddComponent(Component* component);
 		bool CopyComponent(const std::unique_ptr<Component>& component);
-		Transform* GetTransform();
 };
 
 #endif

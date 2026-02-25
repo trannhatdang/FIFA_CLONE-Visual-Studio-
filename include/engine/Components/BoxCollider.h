@@ -7,16 +7,15 @@
 
 typedef struct BColliderOff
 {
-	int t_off;
-	int b_off;
-	int l_off;
-	int r_off;
+	int w_off;
+	int h_off;
 } BColliderOff;
 
 class BoxCollider : public Component
 {
 	private:
 		BColliderOff m_offset;
+		std::unordered_map<GameObject*, bool> m_objectsTouching;
 	public:
 		BoxCollider(GameObject* gameObject, const BColliderOff& offset);
 		void OnStart();

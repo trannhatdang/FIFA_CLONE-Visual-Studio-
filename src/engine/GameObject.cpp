@@ -56,7 +56,10 @@ void GameObject::OnEvent(SDL_Event* event)
 
 void GameObject::OnCollisionEnter(GameObject* obj)
 {
-
+	for(auto i = 0; i < this->m_components.size(); ++i)
+	{
+		m_components[i]->OnCollisionEnter(obj);
+	}
 }
 
 Component* GameObject::GetComponent(int index) const
@@ -72,6 +75,16 @@ Component* GameObject::GetComponent(const std::string& name) const
 		return NULL;
 	}
 	return ans->second;
+}
+
+Transform* GameObject::GetTransform() const
+{
+	return static_cast<Transform*>(m_components[0].get());
+}
+
+std::string GameObject::GetName() const
+{
+	return this->m_name;
 }
 
 bool GameObject::AddComponent(Component* component)
@@ -97,7 +110,3 @@ bool GameObject::CopyComponent(const std::unique_ptr<Component>& component)
 
 }
 
-Transform* GameObject::GetTransform()
-{
-	return static_cast<Transform*>(m_components[0].get());
-}

@@ -19,6 +19,7 @@ class Component
 		virtual void OnDraw(SDL_Renderer* renderer);
 		virtual void OnEvent(SDL_Event* event);
 		virtual std::unique_ptr<Component> copy() = 0;
+		virtual void OnCollisionEnter(GameObject* other);
 		std::string GetName() const;
 };
 

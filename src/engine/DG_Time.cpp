@@ -1,4 +1,4 @@
-#include "engine/DG_Time.h"
+#include "engine/dg_time.h"
 
 float deltaTime = 0.016667f;
 std::chrono::time_point<std::chrono::system_clock> start_point;
