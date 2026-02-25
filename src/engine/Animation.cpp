@@ -13,16 +13,16 @@ Animation::~Animation()
 void Animation::OnDraw(SDL_Renderer* renderer, SDL_Rect viewport)
 {
 	SDL_FRect srcrect;
-	srcrect.x = m_num_frames * m_width;
-	srcrect.y = 0;
-	srcrect.w = m_width;
-	srcrect.h = m_height;
+	srcrect.x = (float)(m_num_frames * m_width);
+	srcrect.y = 0.0;
+	srcrect.w = (float)m_width;
+	srcrect.h = (float)m_height;
 
 	SDL_FRect dstrect;
 	dstrect.x = 0;
 	dstrect.y = 0;
-	dstrect.w = m_width * m_scale;
-	dstrect.h = m_height * m_scale;
+	dstrect.w = (float)(m_width * m_scale);
+	dstrect.h = (float)(m_height * m_scale);
 
 	DrawTexture(renderer, m_texture, viewport, srcrect, dstrect);
 }

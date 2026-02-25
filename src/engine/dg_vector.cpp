@@ -26,9 +26,13 @@ void Vector3::operator+=(const Vector3& other)
 
 void Vector3::operator+=(const Vector3f& other)
 {
-	this->x = (int)std::floor(this->x + other.x);
-	this->y = (int)std::floor(this->y + other.y);
-	this->z = (int)std::floor(this->z + other.z);
+	int newX = (other.x > 0 ? std::floor(other.x) : std::ceil(other.x));
+	int newY = (other.y > 0 ? std::floor(other.y) : std::ceil(other.y));
+	int newZ = (other.z > 0 ? std::floor(other.z) : std::ceil(other.z));
+
+	this->x = this->x + newX;
+	this->y = this->y + newY;
+	this->z = this->z + newZ;
 }
 
 float Vector3f::sqrMagnitude() const
@@ -145,12 +149,12 @@ std::ostream& operator<<(std::ostream& out, const Vector3f& rhs)
 	return out << "(" << rhs.x << ", " << rhs.y << ", " << rhs.z << ")";
 }
 
-Vector3 GetVector3One()
+Vector3 Vector3One()
 {
 	return {1, 1, 1};
 }
 
-Vector3f GetVector3fZero()
+Vector3f Vector3fZero()
 {
 	return Vector3f_zero;
 }

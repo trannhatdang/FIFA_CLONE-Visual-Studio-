@@ -7,12 +7,11 @@ Rigidbody::~Rigidbody() {}
 
 void Rigidbody::OnFixedIterate()
 {
-	auto pos = gameObject->GetTransform()->GetPosition();
+	Vector3 pos = gameObject->GetTransform()->GetPosition();
 
 	m_acceleration = m_force_applied / m_mass;
-
-	pos += m_velocity;
 	m_velocity += m_acceleration;
+	pos += m_velocity;
 
 	this->MovePosition(pos);
 	if(m_hasDrag)
@@ -20,8 +19,8 @@ void Rigidbody::OnFixedIterate()
 		_drag();
 	}
 
-	m_acceleration = GetVector3fZero();
-	m_force_applied = GetVector3fZero();
+	m_acceleration = Vector3fZero();
+	m_force_applied = Vector3fZero();
 }
 
 void Rigidbody::OnIterate()

@@ -23,4 +23,5 @@ void DrawTexture(SDL_Renderer* renderer, SDL_Texture* texture, SDL_Rect viewport
 {
 	SDL_SetRenderViewport(renderer, &viewport);
 	SDL_RenderTexture(renderer, texture, &srcrect, &dstrect);
+	SDL_SetRenderViewport(renderer, NULL);
 }

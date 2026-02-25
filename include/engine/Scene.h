@@ -19,10 +19,12 @@ class Scene
 		void OnFixedIterate();
 		void OnDraw(SDL_Renderer* renderer);
 		void OnEvent(SDL_Event* event);
-		void AddGameObject();
+		void AddGameObject(const std::string& name = "GameObject", const std::string& tag = "Tag");
 		GameObject* GetGameObject(int index = 0);
 		SDL_Renderer* GetRenderer() const;
 		SDL_Window* GetWindow() const;
+
+		void DEBUG_PrintGameObjAdd() const;
 };
 
 #endif

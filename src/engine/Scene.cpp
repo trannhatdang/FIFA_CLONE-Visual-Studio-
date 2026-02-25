@@ -49,9 +49,9 @@ void Scene::OnEvent(SDL_Event* event)
 	}
 }
 
-void Scene::AddGameObject()
+void Scene::AddGameObject(const std::string& name, const std::string& tag)
 {
-	this->m_gameObjects.push_back(std::make_unique<GameObject>());
+	this->m_gameObjects.push_back(std::make_unique<GameObject>(name, tag));
 }
 
 GameObject* Scene::GetGameObject(int index)
@@ -67,4 +67,13 @@ SDL_Renderer* Scene::GetRenderer() const
 SDL_Window* Scene::GetWindow() const
 {
 	return m_window;
+}
+
+void Scene::DEBUG_PrintGameObjAdd() const
+{
+	std::cout << "OBJ ADD: " << std::endl;
+	for(auto i = 0; i < m_gameObjects.size(); ++i)
+	{
+		std::cout << m_gameObjects[i].get() << std::endl;
+	}
 }

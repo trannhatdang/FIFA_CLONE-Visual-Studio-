@@ -18,18 +18,20 @@ void Movement::OnIterate()
 	auto rb = static_cast<Rigidbody*>(gameObject->GetComponent("Rigidbody"));
 	auto transform = gameObject->GetTransform();
 	Vector3f dir = {m_vert, m_hort, 0.0f};
-	Vector3 newDir = dir * DGTime_deltaTime() * m_speed;
+	Vector3f newDir = dir * DGTime_deltaTime() * m_speed;
 
-	rb->MovePosition(transform->GetPosition() + newDir);
+	rb->AddForce(newDir);
 }
 
 void Movement::OnEvent(SDL_Event* event)
 {
-	if(m_playerOne && m_haveControl)
+	if (!m_haveControl) return;
+
+	if(m_playerOne)
 	{
 		PlayerOneControls(event);
 	}
-	else if(!m_playerOne && m_haveControl)
+	else
 	{
 		PlayerTwoControls(event);
 	}
@@ -42,57 +44,50 @@ void Movement::SetControl()
 
 void Movement::PlayerOneControls(SDL_Event* event)
 {
-	if(event->type == SDL_EVENT_KEY_DOWN)
+	if(event->type == SDL_EVENT_KEY_DOWN && event->key.down)
 	{
 		auto keyEvent = event->key;
-		if(keyEvent.down)
+		if(keyEvent.key == SDLK_W)
 		{
-			if(keyEvent.key == SDLK_W)
-			{
-				m_hort = -1.0f;
-			}
+			m_hort = -1.0f;
+		}
 
-			if(keyEvent.key == SDLK_A)
-			{
-				m_vert = -1.0f;
-			}
+		if(keyEvent.key == SDLK_A)
+		{
+			m_vert = -1.0f;
+		}
 
-			if(keyEvent.key == SDLK_D)
-			{
-				m_vert = 1.0f;
-			}
+		if(keyEvent.key == SDLK_D)
+		{
+			m_vert = 1.0f;
+		}
 
-			if(keyEvent.key == SDLK_S)
-			{
-				m_hort = 1.0f;
-			}
+		if(keyEvent.key == SDLK_S)
+		{
+			m_hort = 1.0f;
 		}
 	}
-	else if(event->type == SDL_EVENT_KEY_UP)
+	else if(event->type == SDL_EVENT_KEY_UP && !event->key.down)
 	{
 		auto keyEvent = event->key;
-		if(!keyEvent.down)
+		if(keyEvent.key == SDLK_W)
 		{
-			if(keyEvent.key == SDLK_W)
-			{
-				m_hort = m_hort < 0 ? 0.0f : m_hort;
-			}
+			m_hort = m_hort < 0 ? 0.0f : m_hort;
+		}
 
-			if(keyEvent.key == SDLK_A)
-			{
-				m_vert = m_vert < 0 ? 0.0f : m_vert;
-			}
+		if(keyEvent.key == SDLK_A)
+		{
+			m_vert = m_vert < 0 ? 0.0f : m_vert;
+		}
 
-			if(keyEvent.key == SDLK_D)
-			{
-				m_vert = m_vert > 0 ? 0.0f : m_vert;
-			}
+		if(keyEvent.key == SDLK_D)
+		{
+			m_vert = m_vert > 0 ? 0.0f : m_vert;
+		}
 
-			if(keyEvent.key == SDLK_S)
-			{
-				m_hort = m_hort > 0 ? 0.0f : m_hort;
-			}
-
+		if(keyEvent.key == SDLK_S)
+		{
+			m_hort = m_hort > 0 ? 0.0f : m_hort;
 		}
 	}
 
@@ -100,57 +95,50 @@ void Movement::PlayerOneControls(SDL_Event* event)
 
 void Movement::PlayerTwoControls(SDL_Event* event)
 {
-	if(event->type == SDL_EVENT_KEY_DOWN)
+	if(event->type == SDL_EVENT_KEY_DOWN && event->key.down)
 	{
 		auto keyEvent = event->key;
-		if(keyEvent.down)
+		if(keyEvent.key == SDLK_UP)
 		{
-			if(keyEvent.key == SDLK_UP)
-			{
-				m_hort = -1.0f;
-			}
+			m_hort = -1.0f;
+		}
 
-			if(keyEvent.key == SDLK_LEFT)
-			{
-				m_vert = -1.0f;
-			}
+		if(keyEvent.key == SDLK_LEFT)
+		{
+			m_vert = -1.0f;
+		}
 
-			if(keyEvent.key == SDLK_RIGHT)
-			{
-				m_vert = 1.0f;
-			}
+		if(keyEvent.key == SDLK_RIGHT)
+		{
+			m_vert = 1.0f;
+		}
 
-			if(keyEvent.key == SDLK_DOWN)
-			{
-				m_hort = 1.0f;
-			}
+		if(keyEvent.key == SDLK_DOWN)
+		{
+			m_hort = 1.0f;
 		}
 	}
-	else if(event->type == SDL_EVENT_KEY_UP)
+	else if(event->type == SDL_EVENT_KEY_UP && !event->key.down)
 	{
 		auto keyEvent = event->key;
-		if(!keyEvent.down)
+		if(keyEvent.key == SDLK_UP)
 		{
-			if(keyEvent.key == SDLK_UP)
-			{
-				m_hort = m_hort < 0 ? 0.0f : m_hort;
-			}
+			m_hort = m_hort < 0 ? 0.0f : m_hort;
+		}
 
-			if(keyEvent.key == SDLK_LEFT)
-			{
-				m_vert = m_vert < 0 ? 0.0f : m_vert;
-			}
+		if(keyEvent.key == SDLK_LEFT)
+		{
+			m_vert = m_vert < 0 ? 0.0f : m_vert;
+		}
 
-			if(keyEvent.key == SDLK_RIGHT)
-			{
-				m_vert = m_vert > 0 ? 0.0f : m_vert;
-			}
+		if(keyEvent.key == SDLK_RIGHT)
+		{
+			m_vert = m_vert > 0 ? 0.0f : m_vert;
+		}
 
-			if(keyEvent.key == SDLK_DOWN)
-			{
-				m_hort = m_hort > 0 ? 0.0f : m_hort;
-			}
-
+		if(keyEvent.key == SDLK_DOWN)
+		{
+			m_hort = m_hort > 0 ? 0.0f : m_hort;
 		}
 	}
 
