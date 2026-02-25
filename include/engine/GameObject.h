@@ -21,6 +21,7 @@ class GameObject
 		void OnDraw(SDL_Renderer* renderer);
 		void OnEvent(SDL_Event* event);
 		void OnCollisionEnter(GameObject* obj);
+		void OnTriggerEnter(GameObject* obj);
 		Component* GetComponent(int index) const;
 		Component* GetComponent(const std::string& name) const;
 		Transform* GetTransform() const;

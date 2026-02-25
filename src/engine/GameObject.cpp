@@ -62,6 +62,14 @@ void GameObject::OnCollisionEnter(GameObject* obj)
 	}
 }
 
+void GameObject::OnTriggerEnter(GameObject* obj)
+{
+	for(auto i = 0; i < this->m_components.size(); ++i)
+	{
+		m_components[i]->OnTriggerEnter(obj);
+	}
+}
+
 Component* GameObject::GetComponent(int index) const
 {
 	return m_components[index].get();

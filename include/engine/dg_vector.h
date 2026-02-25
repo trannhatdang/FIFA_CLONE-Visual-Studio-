@@ -15,6 +15,7 @@ typedef struct Vector2
 
 typedef struct Vector3
 {
+	Vector3(int x = 0, int y = 0, int z = 0);
 	int x;
 	int y;
 	int z;

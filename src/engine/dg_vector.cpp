@@ -1,6 +1,11 @@
 #include "engine/dg_vector.h"
 
 const static Vector3f Vector3f_zero = {0, 0, 0};
+Vector3::Vector3(int x, int y, int z) : x(x), y(y), z(z)
+{
+
+}
+
 Vector3 Vector3::operator+(const Vector3& other)
 {
 	Vector3 ans = *this;

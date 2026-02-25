@@ -14,24 +14,3 @@ std::string Component::GetName() const
 {
 	return m_name;
 }
-
-
-void Component::OnStart()
-{
-
-};
-
-void Component::OnFixedIterate()
-{
-
-};
-
-void Component::OnDraw(SDL_Renderer* renderer)
-{
-
-};
-
-void Component::OnEvent(SDL_Event* event)
-{
-
-};

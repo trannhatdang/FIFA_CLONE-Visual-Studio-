@@ -20,6 +20,7 @@ class Component
 		virtual void OnEvent(SDL_Event* event);
 		virtual std::unique_ptr<Component> copy() = 0;
 		virtual void OnCollisionEnter(GameObject* other);
+		virtual void OnTriggerEnter(GameObject* other);
 		std::string GetName() const;
 };
 

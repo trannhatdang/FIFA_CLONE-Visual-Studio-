@@ -34,6 +34,11 @@ void Rigidbody::MovePosition(const Vector3& pos)
 	gameObject->GetTransform()->SetPosition(pos);
 }
 
+void Rigidbody::FixPosition()
+{
+
+}
+
 void Rigidbody::AddForce(const Vector3f& force)
 {
 	m_force_applied += force;
