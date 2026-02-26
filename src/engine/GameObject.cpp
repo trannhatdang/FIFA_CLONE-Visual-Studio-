@@ -104,6 +104,11 @@ std::string GameObject::GetName() const
 	return this->m_name;
 }
 
+std::string GameObject::GetTag() const
+{
+	return this->m_tag;
+}
+
 Scene* GameObject::GetScene() const
 {
 	return m_scene;

@@ -2,8 +2,9 @@
 #define B_COLLIDER_H_
 
 #include "engine/Components/Component.h"
-#include "Rigidbody.h"
 #include <algorithm>
+
+class Rigidbody;
 
 //Only 2D and only box, normally this should inherit another collider component but this should do
 
@@ -35,9 +36,11 @@ class BoxCollider : public Component
 		void OnDraw(SDL_Renderer* renderer);
 		void OnEvent(SDL_Event* event);
 		void DoCollision(GameObject* other_obj);
-		std::unique_ptr<Component> copy();
 		BColliderOff GetOffset() const;
 		void SetOffset(const BColliderOff& offset);
+		bool CheckPath(const Vector3& pos, const Vector3& dir) const;
+
+		std::unique_ptr<Component> copy();
 };
 
 #endif

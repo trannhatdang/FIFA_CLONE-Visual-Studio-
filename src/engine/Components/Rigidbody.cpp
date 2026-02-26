@@ -12,6 +12,7 @@ void Rigidbody::_drag()
 
 Rigidbody::Rigidbody(GameObject* gameObject, bool hasDrag, int drag) : Component("Rigidbody", gameObject), m_hasDrag(hasDrag), m_drag(drag) 
 {
+
 }
 
 Rigidbody::~Rigidbody() {}
@@ -23,6 +24,13 @@ void Rigidbody::OnFixedIterate()
 	m_acceleration = m_force_applied / m_mass;
 	m_velocity += m_acceleration;
 	pos += m_velocity;
+
+	BoxCollider* coll = (BoxCollider*)gameObject->GetComponent("BoxCollider");
+
+	if(coll && !coll->CheckPath(pos, m_velocity))
+	{
+		return;
+	}
 
 	this->MovePosition(pos);
 	if(m_hasDrag)

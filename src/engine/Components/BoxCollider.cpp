@@ -1,4 +1,5 @@
 #include "engine/Components/BoxCollider.h"
+#include "engine/Components/Rigidbody.h"
 #include "engine/GameObject.h"
 #include "engine/Scene.h"
 
@@ -27,31 +28,6 @@ static bool CompareBox(Vector3 pos, BColliderOff off, Vector3 other_pos, BCollid
 	return !(a || b || c || d);
 }
 
-static int FindMinDist(int LDist, int RDist, int TDist, int BDist)
-{
-	LDist = std::abs(LDist);
-	RDist = std::abs(RDist);
-	TDist = std::abs(TDist);
-	BDist = std::abs(BDist);
-
-	if(LDist <= RDist && LDist <= TDist && LDist <= BDist)
-	{
-		return 0;
-	}
-	else if(RDist <= LDist && RDist <= TDist && RDist <= BDist)
-	{
-		return 1;
-	}
-	else if(TDist <= LDist && TDist <= RDist && TDist <= BDist)
-	{
-		return 2;
-	}
-	else
-	{
-		return 3;
-	}
-}
-
 static PointDistInfo FindDistanceFromPointToEdgeOfBox(Vector3 pos, Vector3 other_pos, BColliderOff other_off)
 {
 	int other_box_min_x = other_pos.x;
@@ -71,11 +47,6 @@ static PointDistInfo FindDistanceFromPointToEdgeOfBox(Vector3 pos, Vector3 other
 	int RDist = other_box_max_x - pos.x;
 	int TDist = other_box_min_y - pos.y;
 	int BDist = other_box_max_y - pos.y;
-
-	std::cout << "LDist: " << LDist << std::endl
-		<< "RDist: " << RDist << std::endl
-		<< "TDist: " << TDist << std::endl
-		<< "BDist: " << BDist << std::endl;
 
 	dists.push_back(LDist);
 	dists.push_back(RDist);
@@ -170,8 +141,10 @@ void BoxCollider::OnStart()
 void BoxCollider::OnIterate()
 {
 	auto colls = gameObject->GetScene()->GetColliders();
-	for(auto other_col : colls)
+	int size = colls.size();
+	for(int i = 0; i < size; ++i)
 	{
+		auto other_col = colls[i];
 		if(other_col == this) continue;
 
 		GameObject* other_obj = other_col->gameObject;
@@ -181,7 +154,7 @@ void BoxCollider::OnIterate()
 		Vector3 other_pos = ((Transform*)(other_obj->GetTransform()))->GetPosition();
 		BColliderOff other_off = other_col->GetOffset();
 
-		if(!CompareBox(pos, off, other_pos, other_off)) return; //No collision
+		if(!CompareBox(pos, off, other_pos, other_off)) continue; //No collision
 
 		if(m_trigger)
 		{
@@ -195,18 +168,6 @@ void BoxCollider::OnIterate()
 			DoCollision(other_obj);
 		}
 	}
-
-
-	SDL_Event box_event;
-	box_event.type = BOX_POS_EVENT;
-
-	Vector3 pos = static_cast<Transform*>(gameObject->GetTransform())->GetPosition();
-	box_event.user.data1 = gameObject;
-
-	if(SDL_PushEvent(&box_event) <= 0)
-	{
-		SDL_Log("Pushing event failed: %s", SDL_GetError());
-	};
 }
 
 void BoxCollider::OnDraw(SDL_Renderer* renderer)
@@ -225,38 +186,6 @@ void BoxCollider::OnDraw(SDL_Renderer* renderer)
 
 void BoxCollider::OnEvent(SDL_Event* event)
 {
-	if(event->type == BOX_POS_EVENT)
-	{
-		GameObject* other_obj = (GameObject*)(event->user.data1);
-		if(other_obj == gameObject) return;
-
-		BoxCollider* other_col = (BoxCollider*)other_obj->GetComponent("BoxCollider");
-
-		if(other_col == NULL) // No collision
-		{
-			return;
-		}
-
-		Vector3 pos = static_cast<Transform*>(gameObject->GetTransform())->GetPosition();
-		BColliderOff off = m_offset;
-		Vector3 other_pos = ((Transform*)(other_obj->GetTransform()))->GetPosition();
-		BColliderOff other_off = other_col->GetOffset();
-
-		if(!CompareBox(pos, off, other_pos, other_off)) return; //No collision
-
-		if(m_trigger)
-		{
-			gameObject->OnTriggerEnter(other_obj);
-			other_obj->OnTriggerEnter(gameObject);
-		}
-		else
-		{
-			gameObject->OnCollisionEnter(other_obj);
-			other_obj->OnCollisionEnter(gameObject);
-			DoCollision(other_obj);
-		}
-	}
-
 	if(event->type == SDL_EVENT_KEY_DOWN && event->key.down)
 	{
 		auto keyEvent = event->key;
@@ -283,17 +212,11 @@ void BoxCollider::DoCollision(GameObject* other_obj)
 		auto dir_info = FindDirectionToPushAway(pos, off, other_pos, other_off);
 		if(!dir_info.isIn) return;
 
-		std::cout << dir_info.dist << std::endl;
 		rb->MovePosition(pos + dir_info.dist);
 	}
 
 	auto momentum = rb->GetVelocity() * rb->GetMass();
 	int other_momentum = 0;
-}
-
-std::unique_ptr<Component> BoxCollider::copy()
-{
-	return std::make_unique<BoxCollider>(gameObject, m_offset);
 }
 
 BColliderOff BoxCollider::GetOffset() const 
@@ -304,4 +227,14 @@ BColliderOff BoxCollider::GetOffset() const
 void BoxCollider::SetOffset(const BColliderOff& offset)
 {
 	m_offset = offset;
+}
+
+bool BoxCollider::CheckPath(const Vector3& pos, const Vector3& dir) const
+{
+	return true;
+}
+
+std::unique_ptr<Component> BoxCollider::copy()
+{
+	return std::make_unique<BoxCollider>(gameObject, m_offset);
 }

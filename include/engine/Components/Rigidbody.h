@@ -2,6 +2,7 @@
 #define RIGIDBODY_H_
 
 #include "engine/Components/Component.h"
+#include "BoxCollider.h"
 #include <cmath>
 #include <algorithm>
 

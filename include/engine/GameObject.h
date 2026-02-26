@@ -28,6 +28,7 @@ class GameObject
 		Component* GetComponent(const std::string& name) const;
 		Transform* GetTransform() const;
 		std::string GetName() const;
+		std::string GetTag() const;
 		Scene* GetScene() const;
 		bool AddComponent(Component* component);
 		bool CopyComponent(const std::unique_ptr<Component>& component);
