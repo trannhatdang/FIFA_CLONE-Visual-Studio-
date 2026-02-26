@@ -28,7 +28,9 @@ class BoxCollider : public Component
 		BColliderOff m_offset;
 		std::unordered_map<GameObject*, bool> m_objectsTouching;
 
-		void MoveToFixedPosition(Vector3 pos, PointDistInfo info);
+		void moveToFixedPosition(Vector3 pos, PointDistInfo info);
+		bool checkCollision(const Vector3& pos) const;
+		void checkCollisionOfCurr();
 	public:
 		BoxCollider(GameObject* gameObject, const BColliderOff& offset, bool isTrigger = false);
 		void OnStart();
@@ -38,7 +40,7 @@ class BoxCollider : public Component
 		void DoCollision(GameObject* other_obj);
 		BColliderOff GetOffset() const;
 		void SetOffset(const BColliderOff& offset);
-		bool CheckPath(const Vector3& pos, const Vector3& dir) const;
+		Vector3 CheckPath(const Vector3& pos, const Vector3f& dir) const;
 
 		std::unique_ptr<Component> copy();
 };

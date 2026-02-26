@@ -23,13 +23,18 @@ void Rigidbody::OnFixedIterate()
 
 	m_acceleration = m_force_applied / m_mass;
 	m_velocity += m_acceleration;
-	pos += m_velocity;
+
+	if(std::round(m_velocity.magnitude()) == 0) return;
+	//std::cout << "vel: " << std::round(m_velocity.magnitude()) << std::endl;
 
 	BoxCollider* coll = (BoxCollider*)gameObject->GetComponent("BoxCollider");
-
-	if(coll && !coll->CheckPath(pos, m_velocity))
+	if(coll)
 	{
-		return;
+		pos = coll->CheckPath(pos, m_velocity);
+	}
+	else
+	{
+		pos += m_velocity;
 	}
 
 	this->MovePosition(pos);
@@ -38,8 +43,8 @@ void Rigidbody::OnFixedIterate()
 		_drag();
 	}
 
-	m_acceleration = Vector3fZero();
-	m_force_applied = Vector3fZero();
+	m_acceleration = Vector3f_Zero();
+	m_force_applied = Vector3f_Zero();
 }
 
 void Rigidbody::OnIterate()

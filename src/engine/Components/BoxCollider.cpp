@@ -20,9 +20,9 @@ static bool CompareBox(Vector3 pos, BColliderOff off, Vector3 other_pos, BCollid
 	int other_box_min_y = other_pos.y;
 	int other_box_max_y = other_pos.y + other_off.h;
 
-	bool a = pos.x > other_pos.x + off.w; //left of it is to the right of other's right
+	bool a = pos.x > other_pos.x + other_off.w; //left of it is to the right of other's right
 	bool b = pos.x + off.w < other_pos.x; //right of it is to the left of other's left
-	bool c = pos.y > other_pos.y + off.h; //top of it is under other
+	bool c = pos.y > other_pos.y + other_off.h; //top of it is under other
 	bool d = pos.y + off.h < other_pos.y; //bottom of it is over other
 
 	return !(a || b || c || d);
@@ -119,7 +119,7 @@ static PointDistInfo FindDirectionToPushAway(Vector3 pos, BColliderOff off, Vect
 	return ans[min_ind];
 }
 
-void BoxCollider::MoveToFixedPosition(Vector3 pos, PointDistInfo info)
+void BoxCollider::moveToFixedPosition(Vector3 pos, PointDistInfo info)
 {
 	if(!info.isIn) return;
 
@@ -128,17 +128,30 @@ void BoxCollider::MoveToFixedPosition(Vector3 pos, PointDistInfo info)
 	tfs->SetPosition(pos);
 }
 
-BoxCollider::BoxCollider(GameObject* gameObject, const BColliderOff& offset, bool isTrigger) : Component("BoxCollider", gameObject), m_offset(offset), m_trigger(isTrigger) 
+bool BoxCollider::checkCollision(const Vector3& pos) const
 {
-	gameObject->GetScene()->RegisterCollider(this);
+	auto colls = gameObject->GetScene()->GetColliders();
+	int size = colls.size();
+	for(int i = 0; i < size; ++i)
+	{
+		auto other_col = colls[i];
+		if(other_col == this) continue;
+
+		GameObject* other_obj = other_col->gameObject;
+
+		BColliderOff off = m_offset;
+		Vector3 other_pos = ((Transform*)(other_obj->GetTransform()))->GetPosition();
+		BColliderOff other_off = other_col->GetOffset();
+
+		if(!CompareBox(pos, off, other_pos, other_off)) continue; //No collision
+
+		return true;
+	}
+
+	return false;
 }
 
-void BoxCollider::OnStart()
-{
-
-}
-
-void BoxCollider::OnIterate()
+void BoxCollider::checkCollisionOfCurr()
 {
 	auto colls = gameObject->GetScene()->GetColliders();
 	int size = colls.size();
@@ -168,6 +181,21 @@ void BoxCollider::OnIterate()
 			DoCollision(other_obj);
 		}
 	}
+}
+
+BoxCollider::BoxCollider(GameObject* gameObject, const BColliderOff& offset, bool isTrigger) : Component("BoxCollider", gameObject), m_offset(offset), m_trigger(isTrigger) 
+{
+	gameObject->GetScene()->RegisterCollider(this);
+}
+
+void BoxCollider::OnStart()
+{
+
+}
+
+void BoxCollider::OnIterate()
+{
+	checkCollisionOfCurr();
 }
 
 void BoxCollider::OnDraw(SDL_Renderer* renderer)
@@ -229,9 +257,71 @@ void BoxCollider::SetOffset(const BColliderOff& offset)
 	m_offset = offset;
 }
 
-bool BoxCollider::CheckPath(const Vector3& pos, const Vector3& dir) const
+Vector3 BoxCollider::CheckPath(const Vector3& pos, const Vector3f& dir) const
 {
-	return true;
+	Vector3 old_pos = pos;
+	Vector3 new_pos = pos;
+	Vector3 lim = old_pos + dir;
+	Vector3f new_dir = Vector3f_Zero();
+	Vector3 new_dir_int = {0, 0, 0};
+	Vector3f unit_vector = Vector3f_GetUnitVector(dir);
+	bool xPositive = dir.x > 0;
+	bool yPositive = dir.y > 0;
+	bool limit = false;
+	bool collided = false;
+	int i = 0;
+
+	const int MAX_ITERATE = 10e3;
+
+	for(i = 1; i < MAX_ITERATE; ++i)
+	{
+		new_dir = unit_vector * i;
+		new_dir_int = Vector3(std::round(new_dir.x), std::round(new_dir.y), std::round(new_dir.z));
+			/*Vector3(new_dir.x > 0 ? (int)std::ceil(new_dir.x) : (int)std::floor(new_dir.x), 
+				new_dir.y > 0 ? (int)std::ceil(new_dir.y) : (int)std::floor(new_dir.y), 
+				new_dir.z > 0 ? (int)std::ceil(new_dir.z) : (int)std::floor(new_dir.z));*/
+
+		old_pos = new_pos;
+		new_pos = new_dir_int + pos;
+
+		if((new_dir_int.x > 0 && new_pos.x > lim.x) || (new_dir_int.x < 0 && new_pos.x < lim.x)
+			|| (new_dir_int.y > 0 && new_pos.y > lim.y) || (new_dir_int.y < 0 && new_pos.y < lim.y))
+		{
+			new_pos = lim;
+			limit = true;
+		}
+
+		if(checkCollision(new_pos))
+		{
+			collided = true;
+		}
+
+		if(limit || collided)
+		{
+			break;
+		}
+
+		if(i == MAX_ITERATE - 1)
+		{
+			SDL_Log("CheckPath happened too many times, check BoxCollider");
+		}
+	}
+
+	std::cout << "i: " << i << std::endl;
+	std::cout << "unit: " << unit_vector << std::endl;
+	std::cout << "new_dir_int: " << new_dir_int << std::endl;
+	std::cout << "old_pos: " << old_pos << std::endl;
+	std::cout << "limit: " << (limit ? "true" : "false") << std::endl;
+	std::cout << "lim: " << lim << std::endl;
+
+	if(collided)
+	{
+		return old_pos;
+	}
+	else
+	{
+		return lim;
+	}
 }
 
 std::unique_ptr<Component> BoxCollider::copy()

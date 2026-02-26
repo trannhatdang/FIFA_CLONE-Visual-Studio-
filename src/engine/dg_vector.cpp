@@ -139,9 +139,9 @@ void Vector3f::operator*=(float multipler)
 
 Vector3f::operator Vector3 () const
 {
-	return {this->x > 0 ? (int)ceil(this->x) : (int)floor(this->x),
-		this->y > 0 ? (int)ceil(this->y) : (int)floor(this->y),
-		this->z > 0 ? (int)ceil(this->z) : (int)floor(this->z)};
+	return {this->x > 0 ? (int)floor(this->x) : (int)ceil(this->x),
+		this->y > 0 ? (int)floor(this->y) : (int)ceil(this->y),
+		this->z > 0 ? (int)floor(this->z) : (int)ceil(this->z)};
 }
 
 std::ostream& operator<<(std::ostream& out, const Vector3& rhs)
@@ -154,14 +154,23 @@ std::ostream& operator<<(std::ostream& out, const Vector3f& rhs)
 	return out << "(" << rhs.x << ", " << rhs.y << ", " << rhs.z << ")";
 }
 
-Vector3 Vector3One()
+Vector3 Vector3_One()
 {
 	return {1, 1, 1};
 }
 
-Vector3f Vector3fZero()
+Vector3f Vector3f_Zero()
 {
 	return Vector3f_zero;
+}
+
+Vector3f Vector3f_GetUnitVector(const Vector3f& vec)
+{
+	float mag = vec.magnitude();
+	float x = vec.x / mag;
+	float y = vec.y / mag;
+	float z = vec.z / mag;
+	return { x, y, z };
 }
 
 Vector3f GetMinusVector3f(const Vector3f& vec)

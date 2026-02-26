@@ -47,8 +47,9 @@ typedef struct Vector3f
 std::ostream& operator<<(std::ostream& out, const Vector3& rhs);
 std::ostream& operator<<(std::ostream& out, const Vector3f& rhs);
 
-Vector3 Vector3One();
-Vector3f Vector3fZero();
+Vector3 Vector3_One();
+Vector3f Vector3f_Zero();
+Vector3f Vector3f_GetUnitVector(const Vector3f& vec);
 Vector3f GetMinusVector3f(const Vector3f& vec);
 Vector3f GetVector3fSign(const Vector3f& vec);
 
