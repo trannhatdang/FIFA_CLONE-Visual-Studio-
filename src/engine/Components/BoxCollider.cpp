@@ -1,5 +1,6 @@
 #include "engine/Components/BoxCollider.h"
 #include "engine/GameObject.h"
+#include "engine/Scene.h"
 
 static bool PointInBetweenPoints(int in, int l, int r)
 {
@@ -156,7 +157,10 @@ void BoxCollider::MoveToFixedPosition(Vector3 pos, PointDistInfo info)
 	tfs->SetPosition(pos);
 }
 
-BoxCollider::BoxCollider(GameObject* gameObject, const BColliderOff& offset, bool isTrigger) : Component("BoxCollider", gameObject), m_offset(offset), m_trigger(isTrigger) {}
+BoxCollider::BoxCollider(GameObject* gameObject, const BColliderOff& offset, bool isTrigger) : Component("BoxCollider", gameObject), m_offset(offset), m_trigger(isTrigger) 
+{
+	gameObject->GetScene()->RegisterCollider(this);
+}
 
 void BoxCollider::OnStart()
 {
@@ -165,6 +169,34 @@ void BoxCollider::OnStart()
 
 void BoxCollider::OnIterate()
 {
+	auto colls = gameObject->GetScene()->GetColliders();
+	for(auto other_col : colls)
+	{
+		if(other_col == this) continue;
+
+		GameObject* other_obj = other_col->gameObject;
+
+		Vector3 pos = static_cast<Transform*>(gameObject->GetTransform())->GetPosition();
+		BColliderOff off = m_offset;
+		Vector3 other_pos = ((Transform*)(other_obj->GetTransform()))->GetPosition();
+		BColliderOff other_off = other_col->GetOffset();
+
+		if(!CompareBox(pos, off, other_pos, other_off)) return; //No collision
+
+		if(m_trigger)
+		{
+			gameObject->OnTriggerEnter(other_obj);
+			other_obj->OnTriggerEnter(gameObject);
+		}
+		else
+		{
+			gameObject->OnCollisionEnter(other_obj);
+			other_obj->OnCollisionEnter(gameObject);
+			DoCollision(other_obj);
+		}
+	}
+
+
 	SDL_Event box_event;
 	box_event.type = BOX_POS_EVENT;
 

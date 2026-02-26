@@ -10,7 +10,9 @@ void Rigidbody::_drag()
 	}
 }
 
-Rigidbody::Rigidbody(GameObject* gameObject, bool hasDrag, int drag) : Component("Rigidbody", gameObject), m_hasDrag(hasDrag), m_drag(drag) {}
+Rigidbody::Rigidbody(GameObject* gameObject, bool hasDrag, int drag) : Component("Rigidbody", gameObject), m_hasDrag(hasDrag), m_drag(drag) 
+{
+}
 
 Rigidbody::~Rigidbody() {}
 

@@ -2,18 +2,20 @@
 #define G_OBJECT_
 
 #include "Components/Component.h"
-#include <unordered_map>
 #include "Components/Transform.h"
+#include <unordered_map>
+class Scene;
 
 class GameObject
 {
 	private:
+		std::unordered_map<std::string, Component*> m_comp_map;
 		std::vector<std::unique_ptr<Component>> m_components;
 		std::string m_name;
 		std::string m_tag;
-		std::unordered_map<std::string, Component*> m_comp_map;
+		Scene* m_scene;
 	public:
-		GameObject(std::string name = "GameObject", std::string tag = "Entity");
+		GameObject(Scene* scene, std::string name = "GameObject", std::string tag = "Entity");
 		GameObject(const GameObject& gameObject);
 		void OnStart();
 		void OnIterate();
@@ -26,6 +28,7 @@ class GameObject
 		Component* GetComponent(const std::string& name) const;
 		Transform* GetTransform() const;
 		std::string GetName() const;
+		Scene* GetScene() const;
 		bool AddComponent(Component* component);
 		bool CopyComponent(const std::unique_ptr<Component>& component);
 };

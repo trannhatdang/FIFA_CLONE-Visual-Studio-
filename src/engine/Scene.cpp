@@ -49,9 +49,14 @@ void Scene::OnEvent(SDL_Event* event)
 	}
 }
 
+void Scene::RegisterCollider(BoxCollider* rb)
+{
+	m_colliders.push_back(rb);
+}
+
 void Scene::AddGameObject(const std::string& name, const std::string& tag)
 {
-	this->m_gameObjects.push_back(std::make_unique<GameObject>(name, tag));
+	this->m_gameObjects.push_back(std::make_unique<GameObject>(this, name, tag));
 }
 
 GameObject* Scene::GetGameObject(int index)
@@ -68,6 +73,10 @@ SDL_Window* Scene::GetWindow() const
 {
 	return m_window;
 }
+const std::vector<BoxCollider*>& Scene::GetColliders() const
+{
+	return m_colliders;
+};
 
 void Scene::DEBUG_PrintGameObjAdd() const
 {

@@ -1,14 +1,16 @@
+#include "engine/Scene.h"
 #include "engine/GameObject.h"
 #include "engine/Components/Transform.h"
 
-GameObject::GameObject(std::string name, std::string tag) : m_name(name), m_tag(tag)
+GameObject::GameObject(Scene* scene, std::string name, std::string tag) : m_scene(scene), m_name(name), m_tag(tag)
 {
 	this->AddComponent(new Transform(this));
 }
 
 GameObject::GameObject(const GameObject& gameObject)
 {
-	for(auto i = 0; i < gameObject.m_components.size(); ++i)
+	int size = gameObject.m_components.size();
+	for(auto i = 0; i < size; ++i)
 	{
 		this->CopyComponent(gameObject.m_components[i]);
 	}
@@ -16,7 +18,8 @@ GameObject::GameObject(const GameObject& gameObject)
 
 void GameObject::OnStart()
 {
-	for(auto i = 0; i < this->m_components.size(); ++i)
+	int size = this->m_components.size();
+	for(auto i = 0; i < size; ++i)
 	{
 		m_components[i]->OnStart();
 	}
@@ -24,7 +27,8 @@ void GameObject::OnStart()
 
 void GameObject::OnFixedIterate()
 {
-	for(auto i = 0; i < this->m_components.size(); ++i)
+	int size = this->m_components.size();
+	for(auto i = 0; i < size; ++i)
 	{
 		m_components[i]->OnFixedIterate();
 	}
@@ -32,7 +36,8 @@ void GameObject::OnFixedIterate()
 
 void GameObject::OnIterate()
 {
-	for(auto i = 0; i < this->m_components.size(); ++i)
+	int size = this->m_components.size();
+	for(auto i = 0; i < size; ++i)
 	{
 		m_components[i]->OnIterate();
 	}
@@ -40,7 +45,8 @@ void GameObject::OnIterate()
 
 void GameObject::OnDraw(SDL_Renderer* renderer)
 {
-	for(auto i = 0; i < this->m_components.size(); ++i)
+	int size = this->m_components.size();
+	for(auto i = 0; i < size; ++i)
 	{
 		m_components[i]->OnDraw(renderer);
 	}
@@ -48,7 +54,8 @@ void GameObject::OnDraw(SDL_Renderer* renderer)
 
 void GameObject::OnEvent(SDL_Event* event)
 {
-	for(auto i = 0; i < this->m_components.size(); ++i)
+	int size = this->m_components.size();
+	for(auto i = 0; i < size; ++i)
 	{
 		m_components[i]->OnEvent(event);
 	}
@@ -56,7 +63,8 @@ void GameObject::OnEvent(SDL_Event* event)
 
 void GameObject::OnCollisionEnter(GameObject* obj)
 {
-	for(auto i = 0; i < this->m_components.size(); ++i)
+	int size = this->m_components.size();
+	for(auto i = 0; i < size; ++i)
 	{
 		m_components[i]->OnCollisionEnter(obj);
 	}
@@ -64,7 +72,8 @@ void GameObject::OnCollisionEnter(GameObject* obj)
 
 void GameObject::OnTriggerEnter(GameObject* obj)
 {
-	for(auto i = 0; i < this->m_components.size(); ++i)
+	int size = this->m_components.size();
+	for(auto i = 0; i < size; ++i)
 	{
 		m_components[i]->OnTriggerEnter(obj);
 	}
@@ -93,6 +102,11 @@ Transform* GameObject::GetTransform() const
 std::string GameObject::GetName() const
 {
 	return this->m_name;
+}
+
+Scene* GameObject::GetScene() const
+{
+	return m_scene;
 }
 
 bool GameObject::AddComponent(Component* component)
