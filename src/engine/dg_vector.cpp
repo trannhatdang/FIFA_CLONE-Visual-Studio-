@@ -200,9 +200,9 @@ Vector3f Vector3f_GetUnitVector(const Vector3f& vec)
 
 Vector3f Vector3f_Sqrt(const Vector3f& vec)
 {
-	float x = std::min(vec.x, 0.0f);
-	float y = std::min(vec.y, 0.0f);
-	float z = std::min(vec.z, 0.0f);
+	float x = std::max(vec.x, 0.0f);
+	float y = std::max(vec.y, 0.0f);
+	float z = std::max(vec.z, 0.0f);
 
 	return {sqrt(x), sqrt(y), sqrt(z)};
 }

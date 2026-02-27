@@ -63,6 +63,11 @@ Vector3f Rigidbody::GetVelocity() const
 	return m_velocity;
 }
 
+void Rigidbody::SetVelocity(const Vector3f& vec)
+{
+	m_velocity = vec;
+}	
+
 std::unique_ptr<Component> Rigidbody::copy()
 {
 	return std::make_unique<Rigidbody>(gameObject);
