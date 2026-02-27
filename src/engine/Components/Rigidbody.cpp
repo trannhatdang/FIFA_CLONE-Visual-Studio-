@@ -28,7 +28,7 @@ void Rigidbody::OnFixedIterate()
 	//std::cout << "vel: " << std::round(m_velocity.magnitude()) << std::endl;
 
 	BoxCollider* coll = (BoxCollider*)gameObject->GetComponent("BoxCollider");
-	if(coll)
+	if(coll && m_velocity.magnitude() < 10e3)
 	{
 		pos = coll->CheckPath(pos, m_velocity);
 	}

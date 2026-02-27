@@ -270,6 +270,8 @@ void BoxCollider::OnEvent(SDL_Event* event)
 
 void BoxCollider::DoCollision(GameObject* other_obj)
 {
+	if(other_obj == gameObject) return;
+
 	Rigidbody* rb = (Rigidbody*)gameObject->GetComponent("Rigidbody");
 	if(rb == NULL) return; //if gameobject does not have a rigidbody, it stays still
 	
@@ -294,30 +296,56 @@ void BoxCollider::DoCollision(GameObject* other_obj)
 	Vector3f vel = rb->GetVelocity();
 	Vector3f other_vel = other_rb->GetVelocity();
 
-	Vector3f momentum = vel * mass;
-	Vector3f other_momentum = other_vel * mass;
-
 	Vector3f kinetic = 0.5f * mass * (vel * vel);
-	Vector3f other_kinetic = 0.5f * other_mass * (other_vel * other_vel);
 
-	Vector3f total_momentum = momentum + other_momentum;
+	//std::cout << "momen and kin: " << total_momentum << ' ' << total_kinetic << std::endl;
 
-	Vector3f total_kinetic = kinetic + other_kinetic;
+	//https://en.wikipedia.org/wiki/Elastic_collision
+	Vector3f vel_after = (mass - other_mass)/(mass + other_mass) * vel + (2 * other_mass)/(mass + other_mass) * other_vel;
+	//Vector3f other_vel_after = (2 * mass)/(mass + other_mass) * vel + (other_mass - mass)/(mass + other_mass) * other_vel;
+	
+	Vector3f kinetic_after = 0.5f * mass * (vel_after * vel_after);
+	Vector3f force_diff = Vector3f_GetAbs(kinetic_after - kinetic);
 
-	std::cout << "momen and kin: " << total_momentum << ' ' << total_kinetic << std::endl;
+	if(vel_after.x - vel.x < 0.0f)
+	{
+		force_diff.x = -1.0f * force_diff.x;
+	}
 
-	//Vector3f momentum_after = total_momentum / 2;//momentum of each object is equal after collision
-	Vector3f kinetic_after = total_kinetic / 2;
-	//std::cout << kinetic_after << std::endl;
+	if(vel_after.y - vel.y < 0.0f)
+	{
+		force_diff.y = -1.0f * force_diff.y;
+	}
 
-	Vector3f abs_vel_after = Vector3f_Sqrt(kinetic_after/mass * 2);
-	Vector3f abs_other_vel_after = Vector3f_Sqrt(kinetic_after/other_mass * 2);
-	//std::cout << abs_vel_after << ' ' << abs_other_vel_after << std::endl;
+	if(vel_after.z - vel.z < 0.0f)
+	{
+		force_diff.z = -1.0f * force_diff.z;
+	}
 
-	Vector3f vel_after = FindDir(abs_vel_after, mass, abs_other_vel_after, other_mass, total_momentum);
+	/*if(vel_after.x >= 0.0f && force_diff.x < 0)
+	{
+		force_diff.x = -force_diff.x;
+	}
+	else if (vel_after.x < 0.0f && force_diff.x >= 0)
+	{
+		force_diff.x = -force_diff.x;
+	}
 
-	//std::cout << vel_after << std::endl;
-	rb->SetVelocity(vel_after);
+	if(force_diff.y * vel_after.y < 0.0f)
+	{
+		force_diff.y = -1.0f * force_diff.y;
+	}
+
+	if(force_diff.z * vel_after.z < 0.0f)
+	{
+		force_diff.z = -1.0f * force_diff.z;
+	}*/
+
+	std::cout << gameObject->GetName() << " colliding with " << other_obj->GetName() << std::endl;
+	std::cout << gameObject->GetTransform()->GetPosition() << " colliding with " << other_obj->GetTransform()->GetPosition() << std::endl;
+	std::cout << gameObject->GetName() << vel << ' ' << vel_after << std::endl;
+	std::cout << "Adding Force to " << gameObject->GetName() << " with " << force_diff << std::endl;
+	rb->AddForce(force_diff);
 }
 
 BColliderOff BoxCollider::GetOffset() const 
@@ -344,7 +372,7 @@ Vector3 BoxCollider::CheckPath(const Vector3& pos, const Vector3f& dir) const
 	bool collided = false;
 	int i = 0;
 
-	const int MAX_ITERATE = 10e3;
+	const int MAX_ITERATE = 10e4;
 
 	for(i = 1; i < MAX_ITERATE; ++i)
 	{
@@ -373,20 +401,21 @@ Vector3 BoxCollider::CheckPath(const Vector3& pos, const Vector3f& dir) const
 		{
 			break;
 		}
-
-		if(i == MAX_ITERATE - 1)
-		{
-			SDL_Log("CheckPath happened too many times, check BoxCollider");
-		}
 	}
 
-	/*
-	std::cout << "i: " << i << std::endl;
+	/*std::cout << "i: " << i << std::endl;
 	std::cout << "unit: " << unit_vector << std::endl;
 	std::cout << "new_dir_int: " << new_dir_int << std::endl;
 	std::cout << "old_pos: " << old_pos << std::endl;
 	std::cout << "limit: " << (limit ? "true" : "false") << std::endl;
 	std::cout << "lim: " << lim << std::endl;*/
+
+
+	if(i == MAX_ITERATE - 1)
+	{
+		std::cout << "CheckPath happened too many times, check BoxCollider" << std::endl;;
+		return lim;
+	}
 
 	if(collided)
 	{

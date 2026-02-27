@@ -207,6 +207,11 @@ Vector3f Vector3f_Sqrt(const Vector3f& vec)
 	return {sqrt(x), sqrt(y), sqrt(z)};
 }
 
+Vector3f Vector3f_GetAbs(const Vector3f& vec)
+{
+	return {std::abs(vec.x), std::abs(vec.y), std::abs(vec.z)};
+}
+
 Vector3f GetMinusVector3f(const Vector3f& vec)
 {
 	return Vector3f{-vec.x, -vec.y, -vec.z};
