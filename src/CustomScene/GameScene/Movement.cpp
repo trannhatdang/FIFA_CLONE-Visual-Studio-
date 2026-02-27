@@ -11,23 +11,27 @@ Movement::~Movement()
 
 }
 
-void Movement::OnIterate()
+void Movement::OnFixedIterate()
 {
 	if(!m_haveControl) return;
 
 	auto rb = static_cast<Rigidbody*>(gameObject->GetComponent("Rigidbody"));
 	auto transform = gameObject->GetTransform();
 	Vector3f dir = {m_vert, m_hort, 0.0f};
-	Vector3f new_dir = dir * DGTime_deltaTime() * m_speed;
+	Vector3f new_dir = dir * m_speed;
 	Vector3 new_dir_int =
 		Vector3(new_dir.x > 0 ? std::ceil(new_dir.x) : std::floor(new_dir.x),
 			new_dir.y > 0 ? std::ceil(new_dir.y) : std::floor(new_dir.y),
 			new_dir.z > 0 ? std::ceil(new_dir.z) : std::floor(new_dir.z));
 
-	//rb->AddForce(new_dir);
-	//std::cout << new_dir << std::endl;
-	//std::cout << new_dir_int << std::endl;
 	rb->MovePosition(transform->GetPosition() + new_dir_int);
+	//std::cout << DGTime_deltaTime() << std::endl;
+	//std::cout << new_dir << std::endl;
+	//rb->AddForce(new_dir);
+}
+
+void Movement::OnIterate()
+{
 }
 
 void Movement::OnEvent(SDL_Event* event)

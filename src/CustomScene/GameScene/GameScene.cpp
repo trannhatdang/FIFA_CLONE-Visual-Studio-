@@ -23,7 +23,7 @@ void GenerateGameScene(const std::unique_ptr<Scene>& gameScene)
 	gb->AddComponent(new SpriteRenderer(gb, gameScene->GetRenderer(), GetPlayerSpriteSheet(), playerSprRect, {0, 0, 40, 40}));
 	gb->AddComponent(new Rigidbody(gb, true, 5));
 	gb->AddComponent(new BoxCollider(gb, {40, 40}));
-	gb->AddComponent(new Movement(gb, 0.01f, true, true));
+	gb->AddComponent(new Movement(gb, 1.0f, true, true));
 
 	gameScene->AddGameObject("Player2", "Player");
 	auto gb2 = gameScene->GetGameObject(2);
@@ -31,7 +31,7 @@ void GenerateGameScene(const std::unique_ptr<Scene>& gameScene)
 	gb2->AddComponent(new SpriteRenderer(gb2, gameScene->GetRenderer(), GetPlayerTwoSpriteSheet(), playerSprRect, {0, 0, 40, 40}));
 	gb2->AddComponent(new Rigidbody(gb2, true, 5));
 	gb2->AddComponent(new BoxCollider(gb2, {40, 40}));
-	gb2->AddComponent(new Movement(gb2, 0.01f, true, false));
+	gb2->AddComponent(new Movement(gb2, 1.0f, true, false));
 
 	gameScene->AddGameObject("Ball", "Ball");
 	auto ball = gameScene->GetGameObject(3);

@@ -11,7 +11,8 @@ void DGTime_recordDeltaTime()
 
 void DGTime_stopRecordDeltaTime()
 {
-	deltaTime = (std::chrono::system_clock::now() - start_point).count() / 1000.0f;
+	auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now() - start_point);
+	deltaTime = duration.count() / 1000000000.0;
 }
 
 float DGTime_deltaTime()

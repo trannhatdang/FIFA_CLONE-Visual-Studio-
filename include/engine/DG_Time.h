@@ -2,6 +2,7 @@
 #define DG_TIME_H_
 
 #include <chrono>
+#include <iostream>
 
 void DGTime_recordDeltaTime();
 void DGTime_stopRecordDeltaTime();

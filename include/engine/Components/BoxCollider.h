@@ -35,6 +35,7 @@ class BoxCollider : public Component
 		BoxCollider(GameObject* gameObject, const BColliderOff& offset, bool isTrigger = false);
 		void OnStart();
 		void OnIterate();
+		void OnFixedIterate();
 		void OnDraw(SDL_Renderer* renderer);
 		void OnEvent(SDL_Event* event);
 		void DoCollision(GameObject* other_obj);

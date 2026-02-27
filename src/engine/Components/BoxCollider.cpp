@@ -53,7 +53,7 @@ static PointDistInfo FindDistanceFromPointToEdgeOfBox(Vector3 pos, BColliderOff 
 	dists.push_back(TDist);
 	dists.push_back(BDist);
 
-	printf("LDist: %d; RDist: %d; TDist: %d; BDist: %d\n", LDist, RDist, TDist, BDist);
+	//printf("LDist: %d; RDist: %d; TDist: %d; BDist: %d\n", LDist, RDist, TDist, BDist);
 
 	int res = 0;
 
@@ -195,9 +195,14 @@ void BoxCollider::OnStart()
 
 }
 
-void BoxCollider::OnIterate()
+void BoxCollider::OnFixedIterate()
 {
 	checkCollisionOfCurr();
+}
+
+void BoxCollider::OnIterate()
+{
+
 }
 
 void BoxCollider::OnDraw(SDL_Renderer* renderer)

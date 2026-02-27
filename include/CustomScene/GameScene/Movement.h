@@ -20,6 +20,7 @@ class Movement: public Component
 		Movement(GameObject* obj, float speed = 1.0f, bool haveControl = false, bool playerOne = true);
 		~Movement();
 		void OnIterate();
+		void OnFixedIterate();
 		void OnEvent(SDL_Event* event);
 		void SetControl();
 		void PlayerOneControls(SDL_Event* event);
