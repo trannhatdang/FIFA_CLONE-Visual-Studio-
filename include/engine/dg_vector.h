@@ -2,6 +2,7 @@
 #define DG_VECTOR_H_
 
 #include <iostream>
+#include <algorithm>
 
 struct Vector2;
 struct Vector3;
@@ -32,6 +33,7 @@ typedef struct Vector3f
 	float z;
 	float sqrMagnitude() const;
 	float magnitude() const;
+	Vector3f operator*(int multipler) const;
 	Vector3f operator*(float multipler) const;
 	Vector3f operator/(int multipler) const;
 	Vector3f operator+(const Vector3f& other);
@@ -46,10 +48,14 @@ typedef struct Vector3f
 } Vector3f;
 std::ostream& operator<<(std::ostream& out, const Vector3& rhs);
 std::ostream& operator<<(std::ostream& out, const Vector3f& rhs);
+bool operator==(const Vector3f& lhs, const Vector3f& rhs);
+Vector3f operator*(int lhs, const Vector3f& rhs);
+Vector3f operator*(float lhs, const Vector3f& rhs);
 
 Vector3 Vector3_One();
 Vector3f Vector3f_Zero();
 Vector3f Vector3f_GetUnitVector(const Vector3f& vec);
+Vector3f Vector3f_Sqrt(const Vector3f& vec);
 Vector3f GetMinusVector3f(const Vector3f& vec);
 Vector3f GetVector3fSign(const Vector3f& vec);
 

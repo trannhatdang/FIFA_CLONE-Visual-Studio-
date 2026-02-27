@@ -1,6 +1,5 @@
 #include "engine/dg_vector.h"
 
-const static Vector3f Vector3f_zero = {0, 0, 0};
 Vector3::Vector3(int x, int y, int z) : x(x), y(y), z(z)
 {
 
@@ -48,6 +47,17 @@ float Vector3f::sqrMagnitude() const
 float Vector3f::magnitude() const
 {
 	return std::sqrt(this->x * this->x + this->y * this->y + this->z * this->z);
+}
+
+Vector3f Vector3f::operator*(int multiplier) const
+{
+	Vector3f ans = *this;
+
+	ans.x *= multiplier;
+	ans.y *= multiplier;
+	ans.z *= multiplier;
+
+	return ans;
 }
 
 Vector3f Vector3f::operator*(float multiplier) const
@@ -144,6 +154,11 @@ Vector3f::operator Vector3 () const
 		this->z > 0 ? (int)floor(this->z) : (int)ceil(this->z)};
 }
 
+bool operator==(const Vector3f& lhs, const Vector3f& rhs)
+{
+	return std::abs(rhs.x - lhs.x) < 0.01f && std::abs(rhs.y - lhs.y) < 0.01f && std::abs(rhs.z - lhs.z) < 0.01f;
+}
+
 std::ostream& operator<<(std::ostream& out, const Vector3& rhs)
 {
 	return out << "(" << rhs.x << ", " << rhs.y << ", " << rhs.z << ")";
@@ -154,6 +169,16 @@ std::ostream& operator<<(std::ostream& out, const Vector3f& rhs)
 	return out << "(" << rhs.x << ", " << rhs.y << ", " << rhs.z << ")";
 }
 
+Vector3f operator*(int lhs, const Vector3f& rhs)
+{
+	return rhs * lhs;
+}
+
+Vector3f operator*(float lhs, const Vector3f& rhs)
+{
+	return rhs * lhs;
+}
+
 Vector3 Vector3_One()
 {
 	return {1, 1, 1};
@@ -161,7 +186,7 @@ Vector3 Vector3_One()
 
 Vector3f Vector3f_Zero()
 {
-	return Vector3f_zero;
+	return {0, 0, 0};
 }
 
 Vector3f Vector3f_GetUnitVector(const Vector3f& vec)
@@ -171,6 +196,15 @@ Vector3f Vector3f_GetUnitVector(const Vector3f& vec)
 	float y = vec.y / mag;
 	float z = vec.z / mag;
 	return { x, y, z };
+}
+
+Vector3f Vector3f_Sqrt(const Vector3f& vec)
+{
+	float x = std::min(vec.x, 0.0f);
+	float y = std::min(vec.y, 0.0f);
+	float z = std::min(vec.z, 0.0f);
+
+	return {sqrt(x), sqrt(y), sqrt(z)};
 }
 
 Vector3f GetMinusVector3f(const Vector3f& vec)

@@ -121,6 +121,36 @@ static PointDistInfo FindDirectionToPushAway(Vector3 pos, BColliderOff off, Vect
 	return ans[min_ind];
 }
 
+static Vector3f FindDir(const Vector3f& abs_vel, int mass, const Vector3f& other_abs_vel, int other_mass, Vector3f total_momentum)
+{
+	int curr_case = 0b000000;
+
+	Vector3f vel = abs_vel;
+	Vector3f other_vel = other_abs_vel;
+
+	std::cout << "finding dir: " << std::endl;
+
+	for(int i = 0; i < 32; ++i)
+	{
+		std::cout << "case: " << i << std::endl;
+		vel = { i & 0b1 ? vel.x : -vel.x, i & 0b10 ? vel.y : -vel.y, i & 0b100 ? vel.z : -vel.z };
+		other_vel = { i & 0b1000 ? other_vel.x : -other_vel.x,
+			i & 0b10000 ? other_vel.y : -other_vel.y,
+			i & 0b100000 ? other_vel.z : -other_vel.z
+		};
+
+		std::cout << vel << std::endl;
+		std::cout << other_vel << std::endl;
+
+		if(mass * vel + other_mass * other_vel == total_momentum)
+		{
+			return vel;
+		}
+	}
+
+	return {0.0f, 0.0f, 0.0f};
+}
+
 void BoxCollider::moveToFixedPosition(Vector3 pos, PointDistInfo info)
 {
 	if(!info.isIn) return;
@@ -248,10 +278,32 @@ void BoxCollider::DoCollision(GameObject* other_obj)
 		if(!dir_info.isIn) return;
 
 		rb->MovePosition(pos + dir_info.dist);
+
+		return;
 	}
 
-	auto momentum = rb->GetVelocity() * rb->GetMass();
-	int other_momentum = 0;
+	int mass = rb->GetMass();
+	int other_mass = other_rb->GetMass();
+	Vector3f vel = rb->GetVelocity();
+	Vector3f other_vel = other_rb->GetVelocity();
+
+	Vector3f momentum = vel * mass;
+	Vector3f other_momentum = other_vel * mass;
+
+	Vector3f kinetic = 0.5f * mass * (vel * vel);
+	Vector3f other_kinetic = 0.5f * other_mass * (other_vel * other_vel);
+
+	Vector3f total_momentum = momentum + other_momentum;
+
+	Vector3f total_kinetic = kinetic + other_kinetic;
+
+	//Vector3f momentum_after = total_momentum / 2;//momentum of each object is equal after collision
+	Vector3f kinetic_after = total_kinetic / 2;
+
+	Vector3f abs_vel_after = Vector3f_Sqrt(kinetic_after/mass * 2);
+	Vector3f abs_other_vel_after = Vector3f_Sqrt(kinetic_after/other_mass * 2);
+
+	Vector3f vel_after = FindDir(abs_vel_after, mass, abs_other_vel_after, other_mass, total_momentum);
 }
 
 BColliderOff BoxCollider::GetOffset() const 
