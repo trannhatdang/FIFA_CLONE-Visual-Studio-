@@ -5,8 +5,14 @@ void Rigidbody::_drag()
 {
 	if(m_velocity.sqrMagnitude() > 0)
 	{
-		auto val = 1 - 0.016 * m_drag;
-		m_velocity *= val;
+		auto dragForceMagnitude = m_velocity.sqrMagnitude() * m_drag;
+		auto dragForceVector = dragForceMagnitude * -1.0f * Vector3f_GetUnitVector(m_velocity) * 0.01f;
+
+		//std::cout << dragForceVector << std::endl;
+		this->AddForce(dragForceVector);
+
+		//auto val = 1 - 0.016 * m_drag;
+		//m_velocity *= val;
 	}
 }
 
@@ -38,13 +44,13 @@ void Rigidbody::OnFixedIterate()
 	}
 
 	this->MovePosition(pos);
+	m_acceleration = Vector3f_Zero();
+	m_force_applied = Vector3f_Zero();
+
 	if(m_hasDrag)
 	{
 		_drag();
 	}
-
-	m_acceleration = Vector3f_Zero();
-	m_force_applied = Vector3f_Zero();
 }
 
 void Rigidbody::OnIterate()

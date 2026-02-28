@@ -3,6 +3,7 @@
 
 #include "engine/Components/Component.h"
 #include <algorithm>
+#include <unordered_set>
 
 class Rigidbody;
 
@@ -26,7 +27,7 @@ class BoxCollider : public Component
 		bool m_trigger = false;
 		bool m_debug = false;
 		BColliderOff m_offset;
-		std::unordered_map<GameObject*, bool> m_objectsTouching;
+		std::unordered_set<GameObject*> m_objectsCollided;
 
 		void moveToFixedPosition(Vector3 pos, PointDistInfo info);
 		bool checkCollision(const Vector3& pos) const;
@@ -39,6 +40,7 @@ class BoxCollider : public Component
 		void OnDraw(SDL_Renderer* renderer);
 		void OnEvent(SDL_Event* event);
 		void DoCollision(GameObject* other_obj);
+		void Collide(GameObject* other_obj);
 		BColliderOff GetOffset() const;
 		void SetOffset(const BColliderOff& offset);
 		Vector3 CheckPath(const Vector3& pos, const Vector3f& dir) const;

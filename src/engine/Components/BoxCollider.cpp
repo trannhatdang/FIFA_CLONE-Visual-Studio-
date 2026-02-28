@@ -121,43 +121,6 @@ static PointDistInfo FindDirectionToPushAway(Vector3 pos, BColliderOff off, Vect
 	return ans[min_ind];
 }
 
-static Vector3f FindDir(const Vector3f& abs_vel, int mass, const Vector3f& other_abs_vel, int other_mass, Vector3f total_momentum)
-{
-	Vector3f vel = abs_vel;
-	Vector3f other_vel = other_abs_vel;
-
-	std::cout << "input vel: " << abs_vel << ' ' << other_abs_vel << std::endl;
-
-	/*
-	std::cout << "finding dir: " << std::endl;
-	std::cout << vel << ' ' << other_vel << std::endl;*/
-
-	for(int i = 0; i < 64; ++i)
-	{
-		//std::cout << "case: " << i << std::endl;
-		vel = { i & 0b000001 ? abs_vel.x : -abs_vel.x, i & 0b000010 ? abs_vel.y : -abs_vel.y, i & 0b000100 ? abs_vel.z : -abs_vel.z };
-		other_vel = { i & 0b001000 ? other_abs_vel.x : -other_abs_vel.x,
-			i & 0b010000 ? other_abs_vel.y : -other_abs_vel.y,
-			i & 0b100000 ? other_abs_vel.z : -other_abs_vel.z
-		};
-
-		/*
-		std::cout << (i & 0b000001) << ' ' << (i & 0b000010) << ' ' << (i & 0b000100) << std::endl;
-		std::cout << (i & 0b001000) << ' ' << (i & 0b010000) << ' ' << (i & 0b100000) << std::endl;
-
-		std::cout << vel << std::endl;
-		std::cout << other_vel << std::endl;*/
-
-		if(mass * vel + other_mass * other_vel == total_momentum)
-		{
-			std::cout << vel << std::endl;
-			return vel;
-		}
-	}
-
-	return {0.0f, 0.0f, 0.0f};
-}
-
 void BoxCollider::moveToFixedPosition(Vector3 pos, PointDistInfo info)
 {
 	if(!info.isIn) return;
@@ -197,9 +160,8 @@ void BoxCollider::checkCollisionOfCurr()
 	for(int i = 0; i < size; ++i)
 	{
 		auto other_col = colls[i];
-		if(other_col == this) continue;
-
 		GameObject* other_obj = other_col->gameObject;
+		if(other_col == this || m_objectsCollided.find(other_obj) != m_objectsCollided.end()) continue;
 
 		Vector3 pos = static_cast<Transform*>(gameObject->GetTransform())->GetPosition();
 		BColliderOff off = m_offset;
@@ -208,17 +170,7 @@ void BoxCollider::checkCollisionOfCurr()
 
 		if(!CompareBox(pos, off, other_pos, other_off)) continue; //No collision
 
-		if(m_trigger)
-		{
-			gameObject->OnTriggerEnter(other_obj);
-			other_obj->OnTriggerEnter(gameObject);
-		}
-		else
-		{
-			gameObject->OnCollisionEnter(other_obj);
-			other_obj->OnCollisionEnter(gameObject);
-			DoCollision(other_obj);
-		}
+		Collide(other_obj);
 	}
 }
 
@@ -235,6 +187,7 @@ void BoxCollider::OnStart()
 void BoxCollider::OnFixedIterate()
 {
 	checkCollisionOfCurr();
+	m_objectsCollided.clear();
 }
 
 void BoxCollider::OnIterate()
@@ -270,6 +223,8 @@ void BoxCollider::OnEvent(SDL_Event* event)
 
 void BoxCollider::DoCollision(GameObject* other_obj)
 {
+	if(m_objectsCollided.find(other_obj) != m_objectsCollided.end()) return;
+
 	if(other_obj == gameObject) return;
 
 	Rigidbody* rb = (Rigidbody*)gameObject->GetComponent("Rigidbody");
@@ -287,6 +242,7 @@ void BoxCollider::DoCollision(GameObject* other_obj)
 		if(!dir_info.isIn) return;
 
 		rb->MovePosition(pos + dir_info.dist);
+		m_objectsCollided.insert(other_obj);
 
 		return;
 	}
@@ -304,9 +260,9 @@ void BoxCollider::DoCollision(GameObject* other_obj)
 	Vector3f vel_after = (mass - other_mass)/(mass + other_mass) * vel + (2 * other_mass)/(mass + other_mass) * other_vel;
 	//Vector3f other_vel_after = (2 * mass)/(mass + other_mass) * vel + (other_mass - mass)/(mass + other_mass) * other_vel;
 	
+	/*
 	Vector3f kinetic_after = 0.5f * mass * (vel_after * vel_after);
 	Vector3f force_diff = Vector3f_GetAbs(kinetic_after - kinetic);
-
 	if(vel_after.x - vel.x < 0.0f)
 	{
 		force_diff.x = -1.0f * force_diff.x;
@@ -320,32 +276,33 @@ void BoxCollider::DoCollision(GameObject* other_obj)
 	if(vel_after.z - vel.z < 0.0f)
 	{
 		force_diff.z = -1.0f * force_diff.z;
-	}
-
-	/*if(vel_after.x >= 0.0f && force_diff.x < 0)
-	{
-		force_diff.x = -force_diff.x;
-	}
-	else if (vel_after.x < 0.0f && force_diff.x >= 0)
-	{
-		force_diff.x = -force_diff.x;
-	}
-
-	if(force_diff.y * vel_after.y < 0.0f)
-	{
-		force_diff.y = -1.0f * force_diff.y;
-	}
-
-	if(force_diff.z * vel_after.z < 0.0f)
-	{
-		force_diff.z = -1.0f * force_diff.z;
 	}*/
 
-	std::cout << gameObject->GetName() << " colliding with " << other_obj->GetName() << std::endl;
-	std::cout << gameObject->GetTransform()->GetPosition() << " colliding with " << other_obj->GetTransform()->GetPosition() << std::endl;
-	std::cout << gameObject->GetName() << vel << ' ' << vel_after << std::endl;
+	Vector3f acc = vel_after - vel;
+	Vector3f force_diff = acc * mass;
+
+	//std::cout << gameObject->GetName() << " colliding with " << other_obj->GetName() << std::endl;
+	//std::cout << gameObject->GetName() << vel << ' ' << vel_after << std::endl;
 	std::cout << "Adding Force to " << gameObject->GetName() << " with " << force_diff << std::endl;
 	rb->AddForce(force_diff);
+
+	m_objectsCollided.insert(other_obj);
+}
+
+void BoxCollider::Collide(GameObject* other_obj)
+{
+	if(m_objectsCollided.find(other_obj) != m_objectsCollided.end()) return;
+
+	if(m_trigger)
+	{
+		gameObject->OnTriggerEnter(other_obj);
+	}
+	else
+	{
+		gameObject->OnCollisionEnter(other_obj);
+		DoCollision(other_obj);
+		static_cast<BoxCollider*>(other_obj->GetComponent("BoxCollider"))->Collide(gameObject);
+	}
 }
 
 BColliderOff BoxCollider::GetOffset() const 

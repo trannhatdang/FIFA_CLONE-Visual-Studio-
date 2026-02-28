@@ -21,7 +21,7 @@ void GenerateGameScene(const std::unique_ptr<Scene>& gameScene)
 	auto gb = gameScene->GetGameObject(1);
 	static_cast<Transform*>(gb->GetTransform())->SetPosition({100, 300, -2});
 	gb->AddComponent(new SpriteRenderer(gb, gameScene->GetRenderer(), GetPlayerSpriteSheet(), playerSprRect, {0, 0, 40, 40}));
-	gb->AddComponent(new Rigidbody(gb, true, 5));
+	gb->AddComponent(new Rigidbody(gb, true, 1));
 	gb->AddComponent(new BoxCollider(gb, {40, 40}));
 	gb->AddComponent(new Movement(gb, 1.0f, true, true));
 
@@ -29,7 +29,7 @@ void GenerateGameScene(const std::unique_ptr<Scene>& gameScene)
 	auto gb2 = gameScene->GetGameObject(2);
 	static_cast<Transform*>(gb2->GetTransform())->SetPosition({1000, 300, -2});
 	gb2->AddComponent(new SpriteRenderer(gb2, gameScene->GetRenderer(), GetPlayerTwoSpriteSheet(), playerSprRect, {0, 0, 40, 40}));
-	gb2->AddComponent(new Rigidbody(gb2, true, 5));
+	gb2->AddComponent(new Rigidbody(gb2, true, 1));
 	gb2->AddComponent(new BoxCollider(gb2, {40, 40}));
 	gb2->AddComponent(new Movement(gb2, 1.0f, true, false));
 
@@ -37,7 +37,7 @@ void GenerateGameScene(const std::unique_ptr<Scene>& gameScene)
 	auto ball = gameScene->GetGameObject(3);
 	static_cast<Transform*>(ball->GetTransform())->SetPosition({560, 400, -2});
 	ball->AddComponent(new SpriteRenderer(ball, gameScene->GetRenderer(), GetBallSprite(), ballSprRect, ballSprRect));
-	ball->AddComponent(new Rigidbody(ball, true, 5));
+	ball->AddComponent(new Rigidbody(ball, true, 1));
 	ball->AddComponent(new BoxCollider(ball, {48, 48}));
 
 	gameScene->AddGameObject("Ball2", "Ball");
