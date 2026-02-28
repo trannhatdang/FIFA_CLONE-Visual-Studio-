@@ -21,6 +21,17 @@ Vector3 Vector3::operator+(const Vector3& other)
 	return ans;
 }
 
+Vector3 Vector3::operator-(const Vector3& other)
+{
+	Vector3 ans = *this;
+
+	ans.x -= other.x;
+	ans.y -= other.y;
+	ans.z -= other.z;
+
+	return ans;
+}
+
 void Vector3::operator+=(const Vector3& other)
 {
 	this->x += other.x;
@@ -37,6 +48,12 @@ void Vector3::operator+=(const Vector3f& other)
 	this->x = this->x + newX;
 	this->y = this->y + newY;
 	this->z = this->z + newZ;
+}
+
+Vector3::operator Vector3f () const
+{
+	return { (float)x, (float)y, (float)z};
+
 }
 
 float Vector3f::sqrMagnitude() const
@@ -219,6 +236,11 @@ Vector3f Vector3f_Clamp(const Vector3f& vec, const Vector3f& min, const Vector3f
 		std::max(std::min(vec.y, max.y), min.y),
 		std::max(std::min(vec.z, max.z), min.z)
 	};
+}
+
+float Vector3f_Dot(const Vector3f& lhs, const Vector3f& rhs)
+{
+	return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z;
 }
 
 Vector3f GetMinusVector3f(const Vector3f& vec)

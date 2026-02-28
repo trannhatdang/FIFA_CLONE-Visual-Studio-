@@ -44,20 +44,15 @@ void GenerateGameScene(const std::unique_ptr<Scene>& gameScene)
 	auto player2 = gameScene->AddGameObject("Player2", "Player");
 	static_cast<Transform*>(player2->GetTransform())->SetPosition({1000, 300, -2});
 	player2->AddComponent(new SpriteRenderer(player2, gameScene->GetRenderer(), GetPlayerTwoSpriteSheet(), playerSprRect, {0, 0, 40, 40}));
-	player2->AddComponent(new Rigidbody(player2, true, 5, 60));
+	player2->AddComponent(new Rigidbody(player2, true, 100, 60));
 	player2->AddComponent(new BoxCollider(player2, {40, 40}));
-	player2->AddComponent(new Movement(player2, 5.0f, true, false));
+	player2->AddComponent(new Movement(player2, 50.0f, true, false));
 
 	auto ball = gameScene->AddGameObject("Ball", "Ball");
 	static_cast<Transform*>(ball->GetTransform())->SetPosition({560, 400, -2});
 	ball->AddComponent(new SpriteRenderer(ball, gameScene->GetRenderer(), GetBallSprite(), ballSprRect, ballSprRect));
 	ball->AddComponent(new Rigidbody(ball, true, 1));
 	ball->AddComponent(new BoxCollider(ball, {48, 48}));
-
-	auto ball2 = gameScene->AddGameObject("Ball2", "Ball");
-	static_cast<Transform*>(ball2->GetTransform())->SetPosition({900, 300, -2});
-	ball2->AddComponent(new SpriteRenderer(ball2, gameScene->GetRenderer(), GetBallSprite(), ballSprRect, ballSprRect));
-	ball2->AddComponent(new BoxCollider(ball2, {48, 48}));
 
 	//gameScene->DEBUG_PrintGameObjAdd();
 

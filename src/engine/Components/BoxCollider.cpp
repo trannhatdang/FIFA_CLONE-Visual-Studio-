@@ -29,7 +29,7 @@ static bool CompareBox(Vector3 pos, BColliderOff off, Vector3 other_pos, BCollid
 	return !(a || b || c || d);
 }
 
-static PointDistInfo FindDistanceFromPointToEdgeOfBox(Vector3 pos, BColliderOff off, Vector3 other_pos, BColliderOff other_off)
+static PointDistInfo FindDistanceFromPointToEdgeOfBox(Vector3 pos, BColliderOff off, Vector3 other_pos, BColliderOff other_off, int offset = 0)
 {
 	int other_box_min_x = other_pos.x;
 	int other_box_max_x = other_pos.x + other_off.w;
@@ -44,10 +44,10 @@ static PointDistInfo FindDistanceFromPointToEdgeOfBox(Vector3 pos, BColliderOff 
 	std::vector<int> dists;
 	dists.reserve(4);
 
-	int LDist = other_box_min_x - pos.x;
-	int RDist = other_box_max_x - pos.x;
-	int TDist = other_box_min_y - pos.y;
-	int BDist = other_box_max_y - pos.y;
+	int LDist = other_box_min_x - pos.x + offset;
+	int RDist = other_box_max_x - pos.x + offset;
+	int TDist = other_box_min_y - pos.y + offset;
+	int BDist = other_box_max_y - pos.y + offset;
 
 	dists.push_back(LDist);
 	dists.push_back(RDist);
@@ -83,25 +83,25 @@ static PointDistInfo FindDistanceFromPointToEdgeOfBox(Vector3 pos, BColliderOff 
 	}
 }
 
-static PointDistInfo FindDirectionToPushAway(Vector3 pos, BColliderOff off, Vector3 other_pos, BColliderOff other_off)
+static PointDistInfo FindDirectionToPushAway(Vector3 pos, BColliderOff off, Vector3 other_pos, BColliderOff other_off, int offset = 0)
 {
 	Vector3 vertex0 = pos;
 	Vector3 vertex1 = pos + Vector3(off.w, 0, 0);
 	Vector3 vertex2 = pos + Vector3(off.w, off.h, 0);
 	Vector3 vertex3 = pos + Vector3(0, off.h, 0);
 
-	PointDistInfo vertex0_dist = FindDistanceFromPointToEdgeOfBox(vertex0, off, other_pos, other_off);
-	PointDistInfo vertex1_dist = FindDistanceFromPointToEdgeOfBox(vertex1, off, other_pos, other_off);
-	PointDistInfo vertex2_dist = FindDistanceFromPointToEdgeOfBox(vertex2, off, other_pos, other_off);
-	PointDistInfo vertex3_dist = FindDistanceFromPointToEdgeOfBox(vertex3, off, other_pos, other_off);
+	PointDistInfo vertex0_dist = FindDistanceFromPointToEdgeOfBox(vertex0, off, other_pos, other_off, offset);
+	PointDistInfo vertex1_dist = FindDistanceFromPointToEdgeOfBox(vertex1, off, other_pos, other_off, offset);
+	PointDistInfo vertex2_dist = FindDistanceFromPointToEdgeOfBox(vertex2, off, other_pos, other_off, offset);
+	PointDistInfo vertex3_dist = FindDistanceFromPointToEdgeOfBox(vertex3, off, other_pos, other_off, offset);
 
 	std::vector<PointDistInfo> ans;
 	ans.reserve(4);
 
-	if(vertex0_dist.isIn) ans.push_back(vertex0_dist);
-	if(vertex1_dist.isIn) ans.push_back(vertex1_dist);
-	if(vertex2_dist.isIn) ans.push_back(vertex2_dist);
-	if(vertex3_dist.isIn) ans.push_back(vertex3_dist);
+	if(vertex0_dist.isIn && CompareBox(pos + vertex0_dist.dist, off, other_pos, other_off)) ans.push_back(vertex0_dist);
+	if(vertex1_dist.isIn && CompareBox(pos + vertex1_dist.dist, off, other_pos, other_off)) ans.push_back(vertex1_dist);
+	if(vertex2_dist.isIn && CompareBox(pos + vertex2_dist.dist, off, other_pos, other_off)) ans.push_back(vertex2_dist);
+	if(vertex3_dist.isIn && CompareBox(pos + vertex3_dist.dist, off, other_pos, other_off)) ans.push_back(vertex3_dist);
 
 	int min_ind = 0;
 	int size = ans.size();
@@ -113,7 +113,7 @@ static PointDistInfo FindDirectionToPushAway(Vector3 pos, BColliderOff off, Vect
 
 	for(int i = 0; i < size - 1; ++i)
 	{
-		if(ans[min_ind].dist.sqrMagnitude() < ans[i].dist.sqrMagnitude())
+		if(ans[min_ind].dist.sqrMagnitude() > ans[i].dist.sqrMagnitude())
 		{
 			min_ind = i;
 		}
@@ -241,10 +241,13 @@ void BoxCollider::DoCollision(GameObject* other_obj)
 
 	if(CompareBox(pos, off, other_pos, other_off, true))
 	{
-		auto dir_info = FindDirectionToPushAway(pos, off, other_pos, other_off);
+		auto dir_info = FindDirectionToPushAway(pos, off, other_pos, other_off, 10);
 		if(dir_info.isIn)
 		{
+			std::cout << dir_info.dist << std::endl;
 			rb->MovePosition(pos + dir_info.dist);
+
+			return;
 		}
 	}
 
@@ -259,9 +262,9 @@ void BoxCollider::DoCollision(GameObject* other_obj)
 	Vector3f vel_after = (mass - other_mass * 1.0f)/(mass + other_mass * 1.0f) * vel + (2.0f * other_mass)/(mass + other_mass * 1.0f) * other_vel;
 	//Vector3f other_vel_after = (2 * mass)/(mass + other_mass) * vel + (other_mass - mass)/(mass + other_mass) * other_vel;
 	
-	std::cout << gameObject->GetName() << " colliding with " << other_obj->GetName() << std::endl;
-	std::cout << gameObject->GetName() << vel << ' ' << vel_after << std::endl;
-	rb->SetVelocity(vel_after * 0.9f);
+	//std::cout << gameObject->GetName() << " colliding with " << other_obj->GetName() << std::endl;
+	//std::cout << gameObject->GetName() << vel << ' ' << vel_after << std::endl;
+	rb->SetVelocity(vel_after);
 }
 
 void BoxCollider::Collide(GameObject* other_obj)

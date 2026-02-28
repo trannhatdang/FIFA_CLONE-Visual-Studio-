@@ -22,8 +22,11 @@ typedef struct Vector3
 	int z;
 	int sqrMagnitude() const;
 	Vector3 operator+(const Vector3& other);
+	Vector3 operator-(const Vector3& other);
 	void operator+=(const Vector3f& other);
 	void operator+=(const Vector3& other);
+
+	operator Vector3f () const;
 } Vector3;
 
 typedef struct Vector3f
@@ -58,6 +61,7 @@ Vector3f Vector3f_GetUnitVector(const Vector3f& vec);
 Vector3f Vector3f_Sqrt(const Vector3f& vec);
 Vector3f Vector3f_GetAbs(const Vector3f& vec);
 Vector3f Vector3f_Clamp(const Vector3f& vec, const Vector3f& min, const Vector3f& max);
+float Vector3f_Dot(const Vector3f& lhs, const Vector3f& rhs);
 Vector3f GetMinusVector3f(const Vector3f& vec);
 Vector3f GetVector3fSign(const Vector3f& vec);
 
