@@ -219,7 +219,7 @@ void BoxCollider::DoCollision(GameObject* other_obj)
 
 	//https://en.wikipedia.org/wiki/Elastic_collision
 	Vector3f vel_after = (mass - other_mass * 1.0f)/(mass + other_mass * 1.0f) * vel + (2.0f * other_mass)/(mass + other_mass * 1.0f) * other_vel;
-	vel_after.x = 1.0f * vel_after.x;
+	vel_after.x = -1.0f * vel_after.x;
 	//Vector3f other_vel_after = (2 * mass)/(mass + other_mass) * vel + (other_mass - mass)/(mass + other_mass) * other_vel;
 	
 	//std::cout << gameObject->GetName() << " colliding with " << other_obj->GetName() << std::endl;

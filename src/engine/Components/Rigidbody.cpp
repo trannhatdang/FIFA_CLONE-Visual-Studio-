@@ -29,7 +29,8 @@ void Rigidbody::OnFixedIterate()
 
 	m_acceleration = m_force_applied / m_mass;
 	m_velocity = Vector3f_Clamp(m_velocity + m_acceleration, m_min_vel, m_max_vel);
-	if(m_velocity.magnitude() >= 100)
+
+	if(m_velocity.sqrMagnitude() >= 1000) //speed limit
 	{
 		m_velocity = Vector3f_Zero();
 	}
@@ -38,7 +39,7 @@ void Rigidbody::OnFixedIterate()
 
 	BoxCollider* coll = (BoxCollider*)gameObject->GetComponent("BoxCollider");
 
-	if(coll && m_velocity.magnitude() < 10e3) //just, let it through if it wants to go that bad
+	if(coll)
 	{
 		pos = coll->CheckPath(pos, m_velocity);
 	}
@@ -48,13 +49,19 @@ void Rigidbody::OnFixedIterate()
 	}
 
 	this->MovePosition(pos);
+
 	m_acceleration = Vector3f_Zero();
 	m_force_applied = Vector3f_Zero();
+
 	if(m_hasDrag)
 	{
 		_drag();
 	}
-	coll->CheckCollision();
+
+	if(coll) 
+	{
+		coll->CheckCollision();
+	}
 }
 
 void Rigidbody::OnIterate()

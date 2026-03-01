@@ -59,14 +59,17 @@ void GenerateGameScene(const std::unique_ptr<Scene>& gameScene)
 
 	auto bwall = gameScene->AddGameObject("BWall", "Wall");
 	static_cast<Transform*>(bwall->GetTransform())->SetPosition({0, 790, -2});
+	bwall->AddComponent(new Rigidbody(bwall, true, 1, 100000));
 	bwall->AddComponent(new BoxCollider(bwall, {1120, 110}));
 
 	auto lwall = gameScene->AddGameObject("LWall", "Wall");
 	static_cast<Transform*>(lwall->GetTransform())->SetPosition({-100, 10, -2});
+	lwall->AddComponent(new Rigidbody(lwall, true, 1, 100000));
 	lwall->AddComponent(new BoxCollider(lwall, {110, 780}));
 
 	auto rwall = gameScene->AddGameObject("RWall", "Wall");
 	static_cast<Transform*>(rwall->GetTransform())->SetPosition({1110, 10, -2});
+	rwall->AddComponent(new Rigidbody(rwall, true, 1, 100000));
 	rwall->AddComponent(new BoxCollider(rwall, {110, 780}));
 
 	//players
