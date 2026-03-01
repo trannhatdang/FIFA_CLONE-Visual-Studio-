@@ -33,6 +33,7 @@ void Rigidbody::OnFixedIterate()
 	if(std::round(m_velocity.magnitude()) == 0) return;
 
 	BoxCollider* coll = (BoxCollider*)gameObject->GetComponent("BoxCollider");
+
 	if(coll && m_velocity.magnitude() < 10e3) //just, let it through if it wants to go that bad
 	{
 		pos = coll->CheckPath(pos, m_velocity);
@@ -49,6 +50,7 @@ void Rigidbody::OnFixedIterate()
 	{
 		_drag();
 	}
+	coll->CheckCollision();
 }
 
 void Rigidbody::OnIterate()

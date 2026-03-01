@@ -37,7 +37,7 @@ static bool CompareBox(Vector3 pos, BColliderOff off, Vector3 other_pos, BCollid
 	return !(a || b || c || d);
 }
 
-Vector3 BoxCollider::findDisplacementVec(const Vector3& pos, const Vector3& dir, bool debug)
+Vector3 BoxCollider::findDisplacementVec(const Vector3& pos, const Vector3& dir, bool debug) const
 {
 	const int MAX_ITERATE = 1000000;
 
@@ -56,7 +56,7 @@ Vector3 BoxCollider::findDisplacementVec(const Vector3& pos, const Vector3& dir,
 	return ans;
 }
 
-Vector3 BoxCollider::findDirectionToPushAway(const Vector3& pos, bool debug)
+Vector3 BoxCollider::findDirectionToPushAway(const Vector3& pos, bool debug) const
 {
 	Vector3 l_vec = findDisplacementVec(pos, {-1, 0, 0});
 	Vector3 tl_vec = findDisplacementVec(pos, {-1, -1, 0});
@@ -81,7 +81,7 @@ Vector3 BoxCollider::findDirectionToPushAway(const Vector3& pos, bool debug)
 		}
 	}
 
-	std::cout << vecs[min_index] << std::endl;
+	//std::cout << vecs[min_index] << std::endl;
 
 	return vecs[min_index];
 }
@@ -142,6 +142,12 @@ BoxCollider::BoxCollider(GameObject* gameObject, const BColliderOff& offset, boo
 	gameObject->GetScene()->RegisterCollider(this);
 }
 
+void BoxCollider::CheckCollision()
+{
+	checkCollisionOfCurr();
+	m_objectsCollided.clear();
+}
+
 void BoxCollider::OnStart()
 {
 
@@ -149,9 +155,9 @@ void BoxCollider::OnStart()
 
 void BoxCollider::OnFixedIterate()
 {
-	if (!gameObject->GetComponent("Rigidbody")) return;
-	checkCollisionOfCurr();
-	m_objectsCollided.clear();
+	//if (!gameObject->GetComponent("Rigidbody")) return;
+	//checkCollisionOfCurr();
+	//m_objectsCollided.clear();
 }
 
 void BoxCollider::OnIterate()
@@ -201,15 +207,11 @@ void BoxCollider::DoCollision(GameObject* other_obj)
 	Vector3 other_pos = other_obj->GetTransform()->GetPosition();
 	BColliderOff other_off = static_cast<BoxCollider*>(other_obj->GetComponent("BoxCollider"))->GetOffset();
 
-	if(CompareBox(pos, off, other_pos, other_off, true))
-	{
-		auto dir_info = findDirectionToPushAway(pos);
-		rb->MovePosition(pos + dir_info);
+	auto dir_info = findDirectionToPushAway(pos);
+	rb->MovePosition(pos + dir_info);
+	if(gameObject->GetName() == "Ball") std::cout << dir_info << std::endl;
 
-		return;
-	}
-
-	if(other_rb == NULL)  return; //pushes itself away from stationary object
+	if(other_rb == NULL) return;
 
 	int mass = rb->GetMass();
 	int other_mass = other_rb->GetMass();
@@ -218,11 +220,13 @@ void BoxCollider::DoCollision(GameObject* other_obj)
 
 	//https://en.wikipedia.org/wiki/Elastic_collision
 	Vector3f vel_after = (mass - other_mass * 1.0f)/(mass + other_mass * 1.0f) * vel + (2.0f * other_mass)/(mass + other_mass * 1.0f) * other_vel;
+	vel_after.x = 1.0f * vel_after.x;
 	//Vector3f other_vel_after = (2 * mass)/(mass + other_mass) * vel + (other_mass - mass)/(mass + other_mass) * other_vel;
 	
 	//std::cout << gameObject->GetName() << " colliding with " << other_obj->GetName() << std::endl;
 	//std::cout << gameObject->GetName() << vel << ' ' << vel_after << std::endl;
 	rb->SetVelocity(vel_after);
+
 }
 
 void BoxCollider::Collide(GameObject* other_obj)
@@ -251,11 +255,11 @@ void BoxCollider::SetOffset(const BColliderOff& offset)
 	m_offset = offset;
 }
 
-Vector3 BoxCollider::CheckPath(const Vector3& pos, const Vector3f& dir) const
+Vector3 BoxCollider::CheckPath(const Vector3& pos, const Vector3f& dir)
 {
 	Vector3 old_pos = pos;
 	Vector3 new_pos = pos;
-	Vector3 lim = old_pos + dir;
+	Vector3 lim = old_pos + Vector3(std::round(dir.x), std::round(dir.y), std::round(dir.z));
 	Vector3f new_dir = Vector3f_Zero();
 	Vector3 new_dir_int = {0, 0, 0};
 	Vector3f unit_vector = Vector3f_GetUnitVector(dir);
@@ -267,19 +271,16 @@ Vector3 BoxCollider::CheckPath(const Vector3& pos, const Vector3f& dir) const
 
 	const int MAX_ITERATE = 100000000;
 
-	for(i = 1; i < MAX_ITERATE; ++i)
+	for(i = 0; i < MAX_ITERATE; ++i)
 	{
 		new_dir = unit_vector * i;
 		new_dir_int = Vector3(std::round(new_dir.x), std::round(new_dir.y), std::round(new_dir.z));
-			/*Vector3(new_dir.x > 0 ? (int)std::ceil(new_dir.x) : (int)std::floor(new_dir.x), 
-				new_dir.y > 0 ? (int)std::ceil(new_dir.y) : (int)std::floor(new_dir.y), 
-				new_dir.z > 0 ? (int)std::ceil(new_dir.z) : (int)std::floor(new_dir.z));*/
 
 		old_pos = new_pos;
 		new_pos = new_dir_int + pos;
 
-		if((new_dir_int.x > 0 && new_pos.x > lim.x) || (new_dir_int.x < 0 && new_pos.x < lim.x)
-			|| (new_dir_int.y > 0 && new_pos.y > lim.y) || (new_dir_int.y < 0 && new_pos.y < lim.y))
+		if((new_dir_int.x > 0 && new_pos.x >= lim.x) || (new_dir_int.x < 0 && new_pos.x <= lim.x)
+			|| (new_dir_int.y > 0 && new_pos.y >= lim.y) || (new_dir_int.y < 0 && new_pos.y <= lim.y))
 		{
 			new_pos = lim;
 			limit = true;
@@ -296,13 +297,21 @@ Vector3 BoxCollider::CheckPath(const Vector3& pos, const Vector3f& dir) const
 		}
 	}
 
-	/*
-	std::cout << "check path iterated: " << i << std::endl;
-	std::cout << "unit: " << unit_vector << std::endl;
-	std::cout << "new_dir_int: " << new_dir_int << std::endl;
-	std::cout << "old_pos: " << old_pos << std::endl;
-	std::cout << "limit: " << (limit ? "true" : "false") << std::endl;
-	std::cout << "lim: " << lim << std::endl;*/
+	
+	if(gameObject->GetName() == "Ball")
+	{
+		//std::cout << "check path iterated: " << i << std::endl;
+		//std::cout << "pos: " << pos << std::endl;
+		//std::cout << "unit: " << unit_vector << std::endl;
+		//std::cout << "dir: " << dir << std::endl;
+		//std::cout << "new_dir_int: " << new_dir_int << std::endl;
+		//std::cout << "old_pos: " << old_pos << std::endl;
+		//std::cout << "new_pos: " << new_pos << std::endl;
+		//std::cout << "collided: " << (collided ? "true" : "false") << std::endl;
+		//std::cout << "limit: " << (limit ? "true" : "false") << std::endl;
+		//std::cout << "lim: " << lim << std::endl;
+
+	}
 
 	if(i == MAX_ITERATE - 1)
 	{
@@ -318,6 +327,7 @@ Vector3 BoxCollider::CheckPath(const Vector3& pos, const Vector3f& dir) const
 	{
 		return lim;
 	}
+
 }
 
 std::unique_ptr<Component> BoxCollider::copy()
