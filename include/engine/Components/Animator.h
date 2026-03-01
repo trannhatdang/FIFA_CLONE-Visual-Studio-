@@ -9,16 +9,22 @@ class Animator : public Component
 {
 	private:
 		SDL_Renderer* m_renderer;
-		AnimationNode* m_currNode;
+		AnimationNode* m_currNode = nullptr;
+		AnimationNode* m_startNode;
 		std::unique_ptr<AnimationNode> m_anyNode;
+
 		std::vector<std::unique_ptr<AnimationNode>> m_animations;
-		void _addAllNextNodeOfThisNode(Animator* animator, AnimationNode* oldPrevNode, AnimationNode* newPrevNode, std::unordered_map<AnimationNode*, bool>* hasPrevMap);
 	public:
 		Animator(GameObject* obj, SDL_Renderer* renderer);
-		AnimationNode* AddAnimation(AnimationNode* prevNode, SDL_Renderer* renderer, const std::string& filepath, int width, int height, int num_frame, int scale, cond_func* cond);
-		AnimationNode* GetAnyNode();
+		void OnStart();
 		void OnIterate();
 		std::unique_ptr<Component> copy();
+
+		AnimationNode* AddAnimation(AnimationNode* prevNode, const std::string& filepath, int width, int height, int num_frame, int scale, cond_func* cond);
+		AnimationNode* AddAnimation(AnimationNode* node);
+		AnimationNode* CopyAnyNode(AnimationNode* node);
+		AnimationNode* GetAnyNode();
+		void SetStartNode(AnimationNode* node);
 };
 
 #endif

@@ -9,6 +9,7 @@ typedef bool cond_func(GameObject* obj);
 
 typedef struct AnimationNode
 {
+	friend class Animator;
 	std::vector<AnimationNode*> adj;
 	std::vector<cond_func*> conds;
 	std::unique_ptr<Animation> anim;

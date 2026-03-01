@@ -5,6 +5,7 @@
 
 class Animation
 {
+	friend class Animator;
 	private:
 		SDL_Texture* m_texture;
 		std::string m_filepath;
