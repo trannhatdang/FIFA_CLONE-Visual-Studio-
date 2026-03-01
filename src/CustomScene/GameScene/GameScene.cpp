@@ -56,22 +56,22 @@ void GenerateGameScene(const std::unique_ptr<Scene>& gameScene)
 	auto twall = gameScene->AddGameObject("TWall", "Wall");
 	static_cast<Transform*>(twall->GetTransform())->SetPosition({0, -10000, -2});
 	twall->AddComponent(new Rigidbody(twall, true, 1, 100000));
-	twall->AddComponent(new BoxCollider(twall, {1120, 10010}));
+	twall->AddComponent(new BoxCollider(twall, {1120, 10000}));
 
 	auto bwall = gameScene->AddGameObject("BWall", "Wall");
-	static_cast<Transform*>(bwall->GetTransform())->SetPosition({0, 790, -2});
+	static_cast<Transform*>(bwall->GetTransform())->SetPosition({0, 800, -2});
 	bwall->AddComponent(new Rigidbody(bwall, true, 1, 100000));
 	bwall->AddComponent(new BoxCollider(bwall, {1120, 10010}));
 
 	auto lwall = gameScene->AddGameObject("LWall", "Wall");
 	static_cast<Transform*>(lwall->GetTransform())->SetPosition({-10000, 10, -2});
 	lwall->AddComponent(new Rigidbody(lwall, true, 1, 100000));
-	lwall->AddComponent(new BoxCollider(lwall, {10010, 780}));
+	lwall->AddComponent(new BoxCollider(lwall, {10000, 780}));
 
 	auto rwall = gameScene->AddGameObject("RWall", "Wall");
-	static_cast<Transform*>(rwall->GetTransform())->SetPosition({1110, 10, -2});
+	static_cast<Transform*>(rwall->GetTransform())->SetPosition({1120, 10, -2});
 	rwall->AddComponent(new Rigidbody(rwall, true, 1, 100000));
-	rwall->AddComponent(new BoxCollider(rwall, {10010, 780}));
+	rwall->AddComponent(new BoxCollider(rwall, {10000, 780}));
 
 	//players
 	auto striker1 = gameScene->AddGameObject("Striker1", "Player");
@@ -251,14 +251,38 @@ void GenerateGameScene(const std::unique_ptr<Scene>& gameScene)
 	GameManager* gameManagerComp = static_cast<GameManager*>(gameManagerObj->AddComponent(new GameManager(gameManagerObj, gameScene.get())));
 
 	auto goal1 = gameScene->AddGameObject("Goal1", "Goal");
-	goal1->AddComponent(new Goal(goal1, gameManagerComp));
-	goal1->AddComponent(new BoxCollider(goal1, {80, 160}, true));
-	goal1->GetTransform()->SetPosition({ 0, 160 * 2 });
+	goal1->AddComponent(new Goal(goal1, gameManagerComp, 0));
+	goal1->AddComponent(new BoxCollider(goal1, {80, 140}, true));
+	goal1->GetTransform()->SetPosition({ 0, 160 * 2 + 10 });
 
 	auto goal2 = gameScene->AddGameObject("Goal2", "Goal");
-	goal2->AddComponent(new Goal(goal2, gameManagerComp));
-	goal2->AddComponent(new BoxCollider(goal2, {80, 160}, true));
-	goal2->GetTransform()->SetPosition({ 160 * 6 + 80, 160 * 2 });
+	goal2->AddComponent(new Goal(goal2, gameManagerComp, 1));
+	goal2->AddComponent(new BoxCollider(goal2, {80, 150}, true));
+	goal2->GetTransform()->SetPosition({ 160 * 6 + 80, 160 * 2 + 10 });
+
+	auto goalpost10 = gameScene->AddGameObject("Goalpost10", "Goalpost");
+	auto goalpost10_col = static_cast<BoxCollider*>(goalpost10->AddComponent(new BoxCollider(goalpost10, {80, 10})));
+	goalpost10->AddComponent(new Rigidbody(goalpost10, true, 1, 60000));
+	goalpost10->GetTransform()->SetPosition({ 0, 160 * 2 });
+	goalpost10_col->SetCenter({ 0 , 10000, 0});
+
+	auto goalpost11 = gameScene->AddGameObject("Goalpost11", "Goalpost");
+	auto goalpost11_col = static_cast<BoxCollider*>(goalpost11->AddComponent(new BoxCollider(goalpost11, {80, 10})));
+	goalpost11->AddComponent(new Rigidbody(goalpost11, true, 1, 60000));
+	goalpost11->GetTransform()->SetPosition({ 0, 160 * 2 + 150 });
+	goalpost11_col->SetCenter({ 0 , -10000, 0});
+
+	auto goalpost20 = gameScene->AddGameObject("Goalpost20", "Goalpost");
+	auto goalpost20_col = static_cast<BoxCollider*>(goalpost20->AddComponent(new BoxCollider(goalpost20, {80, 10})));
+	goalpost20->AddComponent(new Rigidbody(goalpost20, true, 1, 60000));
+	goalpost20->GetTransform()->SetPosition({ 160 * 6 + 80, 160 * 2 });
+	goalpost20_col->SetCenter({ 0, 10000, 0});
+
+	auto goalpost21 = gameScene->AddGameObject("Goalpost21", "Goalpost");
+	auto goalpost21_col = static_cast<BoxCollider*>(goalpost21->AddComponent(new BoxCollider(goalpost21, {80, 10})));
+	goalpost21->AddComponent(new Rigidbody(goalpost21, true, 1, 60000));
+	goalpost21->GetTransform()->SetPosition({ 160 * 6 + 80, 160 * 2 });
+	goalpost21_col->SetCenter({ 0, 10000, 0});
 
 	//ui
 	auto score = gameScene->AddGameObject("Score", "UI");

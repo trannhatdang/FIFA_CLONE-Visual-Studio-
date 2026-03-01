@@ -26,7 +26,9 @@ class BoxCollider : public Component
 	private:
 		bool m_trigger = false;
 		bool m_debug = false;
+		bool m_custom_center = false;
 		BColliderOff m_offset;
+		Vector3 m_center;
 		std::unordered_set<GameObject*> m_objectsCollided;
 
 		Vector3 findDisplacementVec(const Vector3& pos, const Vector3& dir) const;
@@ -44,7 +46,9 @@ class BoxCollider : public Component
 		void DoCollision(GameObject* other_obj);
 		void Collide(GameObject* other_obj);
 		BColliderOff GetOffset() const;
+		Vector3 GetCenter() const;
 		void SetOffset(const BColliderOff& offset);
+		void SetCenter(const Vector3& center);
 		Vector3 CheckPath(const Vector3& pos, const Vector3f& dir);
 
 		std::unique_ptr<Component> copy();

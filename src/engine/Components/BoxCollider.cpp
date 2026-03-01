@@ -124,6 +124,7 @@ void BoxCollider::checkCollisionOfCurr()
 
 BoxCollider::BoxCollider(GameObject* gameObject, const BColliderOff& offset, bool isTrigger) : Component("BoxCollider", gameObject), m_trigger(isTrigger), m_offset(offset) 
 {
+	auto pos = gameObject->GetTransform()->GetPosition();
 	gameObject->GetScene()->RegisterCollider(this);
 }
 
@@ -184,11 +185,13 @@ void BoxCollider::DoCollision(GameObject* other_obj)
 	
 	m_objectsCollided.insert(other_obj);
 
+	BoxCollider* other_col = (BoxCollider*)other_obj->GetComponent("BoxCollider");
+
 	Rigidbody* other_rb = (Rigidbody*)other_obj->GetComponent("Rigidbody");
 	Vector3 pos = gameObject->GetTransform()->GetPosition();
 	BColliderOff off = m_offset;
 	Vector3 other_pos = other_obj->GetTransform()->GetPosition();
-	BColliderOff other_off = static_cast<BoxCollider*>(other_obj->GetComponent("BoxCollider"))->GetOffset();
+	BColliderOff other_off = other_col->GetOffset();
 
 	auto dir_info = findDirectionToPushAway(pos);
 	rb->MovePosition(pos + dir_info);
@@ -202,8 +205,9 @@ void BoxCollider::DoCollision(GameObject* other_obj)
 
 	//https://en.wikipedia.org/wiki/Elastic_collision
 	
-	Vector3 center = Vector3(pos.x + std::round(off.w/2.0f), pos.y + std::round(off.h/2.0f), pos.z);
-	Vector3 other_center = Vector3(other_pos.x + std::round(other_off.w/2.0f), other_pos.y + std::round(other_off.h/2.0f), other_pos.z);
+	
+	Vector3 center = GetCenter();
+	Vector3 other_center = other_col->GetCenter();
 	//std::cout << "pos: " << pos << "\ncenter: " << center << std::endl;
 
 	float operand1 = (2.0f * other_mass) / (mass + other_mass);
@@ -266,9 +270,29 @@ BColliderOff BoxCollider::GetOffset() const
 	return m_offset;
 }
 
+Vector3 BoxCollider::GetCenter() const
+{
+	if(m_custom_center)
+	{
+		return m_center;
+	}
+	else
+	{
+		auto pos = gameObject->GetTransform()->GetPosition();
+
+		return { pos.x + m_offset.w/2, pos.y + m_offset.h/2, pos.z };
+	}
+}
+
 void BoxCollider::SetOffset(const BColliderOff& offset)
 {
 	m_offset = offset;
+}
+
+void BoxCollider::SetCenter(const Vector3& center)
+{
+	m_custom_center = true;
+	m_center = center;
 }
 
 Vector3 BoxCollider::CheckPath(const Vector3& pos, const Vector3f& dir)

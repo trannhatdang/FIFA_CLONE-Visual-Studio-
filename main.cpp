@@ -106,5 +106,5 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
 
 void SDL_AppQuit(void *appstate, SDL_AppResult result)
 {
-	TTF_Quit();
+	//TTF_Quit();
 }
