@@ -1,22 +1,26 @@
 #include "CustomScene/GameScene/Controller.h"
 #include "engine/GameObject.h"
 
-Controller::Controller(GameObject* obj, const std::vector<Movement*>& players) : Component("Controller", obj), m_players(players)
+Controller::Controller(GameObject* obj, const std::vector<Movement*>& players, SDL_Keycode code) : Component("Controller", obj), m_players(players), m_key(code)
 {
 	if(m_players.size() != 0)
 	{
 		m_currPlayer = m_players[0];
 	}
+	else
+	{
+		m_currPlayer = nullptr;
+	}
 
 	if(m_players.size() >= 1)
 	{
-		findNextPlayer(m_currPlayer);
+		m_nextPlayer = findNextPlayer(m_currPlayer);
+		m_nextPlayer->SetCursor();
 	}
 	else
 	{
 		m_nextPlayer = nullptr;
 	}
-
 }
 
 Movement* Controller::findNextPlayer(Movement* player)
@@ -44,7 +48,10 @@ void Controller::switchPlayer()
 {
 	m_nextPlayer->SetCursor();
 
+	m_currPlayer->SetControl();
 	m_currPlayer = m_nextPlayer;
+	m_currPlayer->SetControl();
+
 	m_nextPlayer = findNextPlayer(m_currPlayer);
 
 	m_nextPlayer->SetCursor();
@@ -56,6 +63,15 @@ void Controller::OnIterate()
 	{
 		m_currPlayer->SetControl();
 	}
+
+	auto next = findNextPlayer(m_currPlayer);
+
+	if(next != m_nextPlayer)
+	{
+		m_nextPlayer->SetCursor();
+		m_nextPlayer = next;
+		m_nextPlayer->SetCursor();
+	}
 }
 
 void Controller::OnEvent(SDL_Event* event)
@@ -63,7 +79,7 @@ void Controller::OnEvent(SDL_Event* event)
 	if(event->type == SDL_EVENT_KEY_DOWN && event->key.down)
 	{
 		auto keyEvent = event->key;
-		if(event->key.key == SDLK_SPACE)
+		if(event->key.key == m_key)
 		{
 			this->switchPlayer();
 		}
@@ -77,5 +93,5 @@ void Controller::AddPlayer(Movement* move)
 
 std::unique_ptr<Component> Controller::copy()
 {
-	return std::make_unique<Controller>(gameObject, m_players);
+	return std::make_unique<Controller>(gameObject, m_players, m_key);
 }

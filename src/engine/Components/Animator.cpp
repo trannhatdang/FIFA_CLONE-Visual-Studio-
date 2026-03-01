@@ -87,6 +87,11 @@ void Animator::SetStartNode(AnimationNode* node)
 	m_startNode = node;
 };
 
+SDL_FRect Animator::GetDstRect() const
+{
+	return m_currNode->anim->GetDstRect();
+}
+
 //I WILL NEVER COPY
 
 std::unique_ptr<Component> Animator::copy()

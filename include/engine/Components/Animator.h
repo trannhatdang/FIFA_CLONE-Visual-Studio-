@@ -26,6 +26,7 @@ class Animator : public Component
 		AnimationNode* CopyAnyNode(AnimationNode* node);
 		AnimationNode* GetAnyNode();
 		void SetStartNode(AnimationNode* node);
+		SDL_FRect GetDstRect() const;
 };
 
 #endif

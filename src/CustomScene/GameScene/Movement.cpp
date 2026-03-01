@@ -1,15 +1,18 @@
 #include "CustomScene/GameScene/Movement.h"
 #include "engine/GameObject.h"
 
-Movement::Movement(GameObject* obj, SDL_Renderer* renderer, float speed, bool haveControl, bool playerOne) : Component("Movement", obj), m_speed(speed), m_haveControl(haveControl), m_playerOne(playerOne)
+Movement::Movement(GameObject* obj, SDL_Renderer* renderer, float speed, bool haveControl, bool playerOne) : Component("Movement", obj), m_renderer(renderer), m_speed(speed), m_haveControl(haveControl), m_playerOne(playerOne)
 {
 	m_selected_arrow = CreateTextureFromPNG(renderer, GetSelectedArrowSprite());
 	m_unselected_arrow = CreateTextureFromPNG(renderer, GetUnselectedArrowSprite());
+
+	m_cursor = false;
 }
 
 Movement::~Movement()
 {
-
+	SDL_DestroyTexture(m_selected_arrow);
+	SDL_DestroyTexture(m_unselected_arrow);
 }
 
 void Movement::OnFixedIterate()
@@ -52,16 +55,35 @@ void Movement::OnEvent(SDL_Event* event)
 
 void Movement::OnDraw(SDL_Renderer* renderer)
 {
-	SDL_FRect dstrect = static_cast<SpriteRenderer*>(gameObject->GetComponent("SpriteRenderer"))->GetDstRect();
-	Vector3 pos = gameObject->GetTransform()->GetPosition() + Vector3(dstrect.w/2, -20, 0);
+	if(!m_cursor && !m_haveControl) return;
+	
+	auto anim = static_cast<Animator*>(gameObject->GetComponent("Animator"));
+	if (!anim) return;
 
-	SDL_FRect viewport;
+	SDL_FRect anim_dstrect = anim->GetDstRect();
+	Vector3 pos = gameObject->GetTransform()->GetPosition() + Vector3(anim_dstrect.w/2 - 5, -20, 0);
+
+	SDL_Texture* texture = m_haveControl ? m_selected_arrow : m_unselected_arrow;
+
+	SDL_Rect viewport;
 	viewport.x = pos.x;
 	viewport.y = pos.y;
 	viewport.w = 10;
 	viewport.h = 10;
 
-	DrawTexture(renderer, m_texture, viewport, m_srcrect, m_dstrect);
+	SDL_FRect srcrect;
+	srcrect.x = 0;
+	srcrect.y = 0;
+	srcrect.w = 10;
+	srcrect.h = 10;
+
+	SDL_FRect dstrect;
+	dstrect.x = 0;
+	dstrect.y = 0;
+	dstrect.w = 10;
+	dstrect.h = 10;
+
+	DrawTexture(renderer, texture, viewport, srcrect, dstrect);
 }
 
 bool Movement::GetControl() const
@@ -187,5 +209,5 @@ void Movement::PlayerTwoControls(SDL_Event* event)
 }
 std::unique_ptr<Component> Movement::copy()
 {
-	return std::make_unique<Movement>(gameObject);
+	return std::make_unique<Movement>(gameObject, m_renderer, m_speed, m_haveControl, m_playerOne);
 }

@@ -10,11 +10,12 @@ class Controller : public Component
 		std::vector<Movement*> m_players;
 		Movement* m_currPlayer;
 		Movement* m_nextPlayer;
+		SDL_Keycode m_key;
 
 		void switchPlayer();
 		Movement* findNextPlayer(Movement* player);
 	public:
-		Controller(GameObject* obj, const std::vector<Movement*>& players);
+		Controller(GameObject* obj, const std::vector<Movement*>& players, SDL_Keycode key);
 		void OnIterate();
 		void OnEvent(SDL_Event* event);
 		void AddPlayer(Movement* move);

@@ -3,7 +3,7 @@
 
 #include "engine/Components/Component.h"
 #include "engine/Components/Rigidbody.h"
-#include "engine/Components/SpriteRenderer.h"
+#include "engine/Components/Animator.h"
 #include "Config.h"
 #include "engine/DG_Time.h"
 #include "engine/dg_vector.h"
@@ -11,9 +11,10 @@
 class Movement: public Component
 {
 	private:
-		float m_speed = 0.0f;
+		SDL_Renderer* m_renderer;
 		SDL_Texture* m_selected_arrow;
 		SDL_Texture* m_unselected_arrow;
+		float m_speed = 0.0f;
 
 		float m_hort = 0.0f;
 		float m_vert = 0.0f;
