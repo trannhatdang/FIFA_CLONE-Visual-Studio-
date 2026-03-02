@@ -35,6 +35,8 @@ static void ChangeScene(int index)
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char** argv)
 {
+	srand(time(0));
+
 	char windowCaption[5] = "game";
 	SDL_SetAppMetadata("FIFA CLONE", "0.1", "deng_FC");
 

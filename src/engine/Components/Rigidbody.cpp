@@ -90,6 +90,11 @@ void Rigidbody::SetVelocity(const Vector3f& vec)
 	m_velocity = Vector3f_Clamp(vec, m_min_vel, m_max_vel);
 }	
 
+void Rigidbody::AddVelocity(const Vector3f& vec)
+{
+	m_velocity = Vector3f_Clamp(m_velocity + vec, m_min_vel, m_max_vel);
+}	
+
 void Rigidbody::MovePosition(const Vector3& pos)
 {
 	gameObject->GetTransform()->SetPosition(pos);

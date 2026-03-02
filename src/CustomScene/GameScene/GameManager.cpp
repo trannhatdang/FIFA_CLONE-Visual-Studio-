@@ -6,12 +6,42 @@ GameManager::GameManager(GameObject* obj, Scene* scene, const GameState& state) 
 
 }
 
+void GameManager::reset(int keep_score)
+{
+	for(auto player : m_players)
+	{
+		auto ogPos = player->GetTransform()->GetOGPosition();
+		player->GetTransform()->SetPosition(ogPos);
+		static_cast<Rigidbody*>(player->GetComponent("Rigidbody"))->Reset();
+	}
+
+	for(auto controller : m_controllers)
+	{
+		static_cast<Controller*>(controller->GetComponent("Controller"))->Reset();
+	}
+
+	auto ballPos = m_ball->GetTransform()->GetOGPosition();
+	m_ball->GetTransform()->SetPosition(ballPos);
+	static_cast<Rigidbody*>(m_ball->GetComponent("Rigidbody"))->Reset();
+	static_cast<Wind*>(m_ball->GetComponent("Wind"))->Reset();
+	static_cast<Font*>(m_wind_speed->GetComponent("Font"))->SetText("(" + std::to_string(0.0f) + ", " + std::to_string(0.0f) + ")");
+
+	if(!keep_score)
+	{
+		m_team1_score = 0;
+		m_team2_score = 0;
+	}
+
+	static_cast<Font*>(m_score->GetComponent("Font"))->SetText(std::to_string(m_team1_score) + " : " + std::to_string(m_team2_score));
+}
+
 void GameManager::OnStart()
 {
 	m_players = m_scene->GetGameObjectsWithTag("Player");
 	m_controllers = m_scene->GetGameObjectsWithTag("Controller");
 	m_ball = m_scene->GetGameObject("Ball");
 	m_score = m_scene->GetGameObject("Score");
+	m_wind_speed = m_scene->GetGameObject("WindSpeed");
 }
 
 void GameManager::OnIterate()
@@ -33,7 +63,7 @@ void GameManager::OnIterate()
 			m_recording = false;
 			m_gameState = Playing;
 
-			reset();
+			reset(true);
 		}
 	}
 	else if(m_gameState == Paused)
@@ -44,27 +74,37 @@ void GameManager::OnIterate()
 	{
 
 	}
+
 }
 
-void GameManager::reset()
+void GameManager::changeWindSpeed()
 {
-	for(auto player : m_players)
+	auto wind = (Wind*)m_ball->GetComponent("Wind");
+	
+	float new_x = (float)(rand() % 7 - 3);
+	float new_y = (float)(rand() % 7 - 3);
+	float new_z = (float)(rand() % 7 - 3);
+	wind->SetWindSpeed({ new_x, new_y, new_z });
+	if(m_wind_speed)
 	{
-		auto ogPos = player->GetTransform()->GetOGPosition();
-		player->GetTransform()->SetPosition(ogPos);
-		static_cast<Rigidbody*>(player->GetComponent("Rigidbody"))->Reset();
+		static_cast<Font*>(m_wind_speed->GetComponent("Font"))->SetText("(" + std::to_string(new_x) + ", " + std::to_string(new_y) + ")");
 	}
+}
 
-	for(auto controller : m_controllers)
+void GameManager::OnEvent(SDL_Event* event)
+{
+	if(event->type == SDL_EVENT_KEY_DOWN && event->key.down)
 	{
-		static_cast<Controller*>(controller->GetComponent("Controller"))->Reset();
+		auto keyEvent = event->key;
+		if(keyEvent.key == SDLK_R)
+		{
+			reset(false);
+		}
+		else if(keyEvent.key == SDLK_C)
+		{
+			changeWindSpeed();
+		}
 	}
-
-	auto ballPos = m_ball->GetTransform()->GetOGPosition();
-	m_ball->GetTransform()->SetPosition(ballPos);
-	static_cast<Rigidbody*>(m_ball->GetComponent("Rigidbody"))->Reset();
-
-	static_cast<Font*>(m_score->GetComponent("Font"))->SetText(std::to_string(m_team1_score) + " : " + std::to_string(m_team2_score));
 }
 
 std::unique_ptr<Component> GameManager::copy()

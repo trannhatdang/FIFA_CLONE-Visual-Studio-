@@ -239,6 +239,7 @@ void GenerateGameScene(const std::unique_ptr<Scene>& gameScene)
 	ball->AddComponent(new SpriteRenderer(ball, renderer, GetBallSprite(), ballSrcRect, ballSrcRect));
 	ball->AddComponent(new Rigidbody(ball, true, 1));
 	ball->AddComponent(new BoxCollider(ball, {48, 48}));
+	ball->AddComponent(new Wind(ball));
 
 	//controllers
 	auto controller1 = gameScene->AddGameObject("Controller1", "Controller");
@@ -289,4 +290,9 @@ void GenerateGameScene(const std::unique_ptr<Scene>& gameScene)
 	static_cast<Transform*>(score->GetTransform())->SetPosition({500, 20, -2});
 	auto score_font = static_cast<Font*>(score->AddComponent(new Font(score, renderer, GetFont())));
 	score_font->SetText("0 : 0");
+
+	auto wind_speed_text = gameScene->AddGameObject("WindSpeed", "UI");
+	static_cast<Transform*>(wind_speed_text->GetTransform())->SetPosition({100, 20, -2});
+	auto wind_speed_font = static_cast<Font*>(wind_speed_text->AddComponent(new Font(wind_speed_text, renderer, GetFont())));
+	wind_speed_font->SetText("(0.0, 0.0)");
 }
