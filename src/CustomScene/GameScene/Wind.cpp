@@ -14,10 +14,11 @@ void Wind::OnIterate()
 
 void Wind::OnFixedIterate()
 {
-	if(rand() % 10 == 0){
-		auto rb = (Rigidbody*)gameObject->GetComponent("Rigidbody");
-		rb->AddVelocity(0.1f*m_speed);
-
+	auto rb = (Rigidbody*)gameObject->GetComponent("Rigidbody");
+	if(rb->GetVelocity().magnitude() < 5)
+	{
+		rb->AddVelocity(0.01f*m_speed);
+		//std::cout << rb->GetVelocity() << std::endl;
 	}
 }
 

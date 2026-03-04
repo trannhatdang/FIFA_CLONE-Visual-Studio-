@@ -30,8 +30,8 @@ void Movement::OnFixedIterate()
 
 	if(!m_playerControl)
 	{
-		std::cout << dir << std::endl;
-		std::cout << new_dir_int << std::endl;
+		//std::cout << dir << std::endl;
+		//std::cout << new_dir_int << std::endl;
 	}
 	//std::cout << DGTime_deltaTime() << std::endl;
 	//std::cout << new_dir << std::endl;
