@@ -37,7 +37,6 @@ void Rigidbody::OnFixedIterate()
 
 	if(std::round(m_velocity.magnitude()) == 0) return;
 
-
 	this->MovePosition(pos, m_velocity);
 
 	m_acceleration = Vector3f_Zero();
@@ -88,18 +87,14 @@ void Rigidbody::MovePosition(const Vector3& pos, const Vector3& dir)
 	if(coll)
 	{
 		new_pos = coll->CheckPath(new_pos, m_velocity);
+		coll->CheckCollision();
 	}
 	else
 	{
 		new_pos += m_velocity;
 	}
 
-	if(coll) 
-	{
-		coll->CheckCollision();
-	}
-
-	gameObject->GetTransform()->SetPosition(pos);
+	gameObject->GetTransform()->SetPosition(new_pos);
 }
 
 void Rigidbody::MovePosition(const Vector3& pos)
