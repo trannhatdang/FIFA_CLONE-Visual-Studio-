@@ -87,14 +87,13 @@ void Rigidbody::MovePosition(const Vector3& pos, const Vector3& dir)
 	if(coll)
 	{
 		new_pos = coll->CheckPath(new_pos, m_velocity);
-		coll->CheckCollision();
 	}
 	else
 	{
 		new_pos += m_velocity;
 	}
 
-	gameObject->GetTransform()->SetPosition(pos);
+	gameObject->GetTransform()->SetPosition(new_pos);
 }
 
 void Rigidbody::MovePosition(const Vector3& pos)

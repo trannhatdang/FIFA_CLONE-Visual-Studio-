@@ -40,7 +40,7 @@ Vector3 BoxCollider::findDisplacementVec(const Vector3& pos, const Vector3& dir)
 	{
 		ans += dir;
 
-		if(!checkCollision(ans + pos))
+		if(!CheckCollision(ans + pos))
 		{
 			break;
 		}
@@ -100,8 +100,7 @@ void BoxCollider::checkCollisionOfCurr()
 
 void BoxCollider::CheckCollision()
 {
-	checkCollisionOfCurr();
-	m_objectsCollided.clear();
+
 }
 
 void BoxCollider::OnStart()
@@ -111,7 +110,7 @@ void BoxCollider::OnStart()
 
 void BoxCollider::OnFixedIterate()
 {
-
+	checkCollisionOfCurr();
 }
 
 void BoxCollider::OnIterate()
@@ -165,13 +164,12 @@ void BoxCollider::DoCollision(GameObject* other_obj)
 
 	if(other_rb == NULL) return;
 
-	//calculatinng vel after: https://en.wikipedia.org/wiki/Elastic_collision
+	//calculating vel after: https://en.wikipedia.org/wiki/Elastic_collision
 	int mass = rb->GetMass();
 	int other_mass = other_rb->GetMass();
 	Vector3f vel = rb->GetVelocity();
 	Vector3f other_vel = other_rb->GetVelocity();
 
-	//https://en.wikipedia.org/wiki/Elastic_collision
 	Vector3 center = GetCenter();
 	Vector3 other_center = other_col->GetCenter();
 
@@ -184,7 +182,7 @@ void BoxCollider::DoCollision(GameObject* other_obj)
 
 	Vector3f vel_after = vel - cen_operand;
 
-	if(vel.magnitude() > 1000)
+	if(vel.magnitude() > 3)
 	{
 		std::cout << gameObject->GetName() << " colliding with " << other_obj->GetName() << std::endl;
 		std::cout << "mass: " << mass << " " << other_mass << std::endl;
@@ -298,21 +296,19 @@ Vector3 BoxCollider::CheckPath(const Vector3& pos, const Vector3f& dir)
 		}
 	}
 	
-	if(gameObject->GetName() == "Ball")
+	if(gameObject->GetName() == "Striker12d")
 	{
-		//std::cout << "check path iterated: " << i << std::endl;
-		//std::cout << "pos: " << pos << std::endl;
-		//std::cout << "unit: " << unit_vector << std::endl;
-		//std::cout << "dir: " << dir << std::endl;
-		//std::cout << "new_dir_int: " << new_dir_int << std::endl;
-		//std::cout << "old_pos: " << old_pos << std::endl;
-		//std::cout << "new_pos: " << new_pos << std::endl;
-		//std::cout << "collided: " << (collided ? "true" : "false") << std::endl;
-		//std::cout << "limit: " << (limit ? "true" : "false") << std::endl;
-		//std::cout << "lim: " << lim << std::endl;
-
+		std::cout << "check path iterated: " << i << std::endl;
+		std::cout << "pos: " << pos << std::endl;
+		std::cout << "unit: " << unit_vector << std::endl;
+		std::cout << "dir: " << dir << std::endl;
+		std::cout << "new_dir_int: " << new_dir_int << std::endl;
+		std::cout << "old_pos: " << old_pos << std::endl;
+		std::cout << "new_pos: " << new_pos << std::endl;
+		std::cout << "collided: " << (collided ? "true" : "false") << std::endl;
+		std::cout << "limit: " << (limit ? "true" : "false") << std::endl;
+		std::cout << "lim: " << lim << std::endl;
 	}
-
 
 	if(i == MAX_ITERATE - 1)
 	{
@@ -346,7 +342,6 @@ bool BoxCollider::CheckCollision(const Vector3& pos) const
 
 	return false;
 }
-
 
 std::unique_ptr<Component> BoxCollider::copy()
 {
