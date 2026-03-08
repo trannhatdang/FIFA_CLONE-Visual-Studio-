@@ -156,14 +156,16 @@ void BoxCollider::DoCollision(GameObject* other_obj)
 	Rigidbody* other_rb = (Rigidbody*)other_obj->GetComponent("Rigidbody");
 	Vector3 pos = gameObject->GetTransform()->GetPosition();
 
-	auto dir_info = findDirectionToPushAway(pos);
-	rb->MovePosition(pos + dir_info);
-
-	if(gameObject->GetName() == "Ball")
+	if(other_rb->GetMass() >= rb->GetMass())
 	{
-		std::cout << "dir_info: " << dir_info << std::endl;
-	}
+		auto dir_info = findDirectionToPushAway(pos);
+		rb->MovePosition(pos + dir_info);
 
+		if(gameObject->GetName() == "Ball")
+		{
+			std::cout << "dir_info: " << dir_info << std::endl;
+		}
+	}
 	if(other_rb == NULL) return;
 
 	//https://en.wikipedia.org/wiki/Elastic_collision
@@ -184,7 +186,7 @@ void BoxCollider::DoCollision(GameObject* other_obj)
 
 	Vector3f vel_after = vel - cen_operand;
 
-	if(vel.magnitude() > 1 && gameObject->GetName() == "Ball")
+	if(vel.magnitude() > 5 && gameObject->GetName() == "Ball")
 	{
 		std::cout << gameObject->GetName() << " colliding with " << other_obj->GetName() << std::endl;
 		std::cout << "mass: " << mass << " " << other_mass << std::endl;
@@ -264,18 +266,18 @@ Vector3 BoxCollider::CheckPath(const Vector3& pos, const Vector3f& dir)
 	Vector3 old_pos = pos;
 	Vector3 new_pos = pos;
 	Vector3 lim = old_pos + Vector3(std::round(dir.x), std::round(dir.y), std::round(dir.z));
+
 	Vector3f new_dir = Vector3f_Zero();
 	Vector3 new_dir_int = {0, 0, 0};
 	Vector3f unit_vector = Vector3f_GetUnitVector(dir);
+
 	bool limit = false;
 	bool collided = false;
-	int i = 0;
-
-	//std::cout << "unit vector: " << unit_vector << std::endl;
+	int i = 1;
 
 	const int MAX_ITERATE = 100000000;
 
-	for(i = 0; i < MAX_ITERATE; ++i)
+	for(i = 1; i < MAX_ITERATE; ++i)
 	{
 		new_dir = unit_vector * i;
 		new_dir_int = Vector3(std::round(new_dir.x), std::round(new_dir.y), std::round(new_dir.z));
@@ -289,10 +291,12 @@ Vector3 BoxCollider::CheckPath(const Vector3& pos, const Vector3f& dir)
 			limit = true;
 		}
 
-		if(CheckCollision(new_pos))
+		auto obj = CheckCollision(new_pos);
+
+		if(obj)
 		{
-			collided = true;
 			//Collide(obj);
+			collided = true;
 		}
 
 		if(limit || collided)
@@ -322,9 +326,16 @@ Vector3 BoxCollider::CheckPath(const Vector3& pos, const Vector3f& dir)
 	}
 
 	return new_pos;
+
+	if(collided)
+	{
+		return old_pos;
+	}
+
+	return new_pos;
 }
 
-bool BoxCollider::CheckCollision(const Vector3& pos) const
+GameObject* BoxCollider::CheckCollision(const Vector3& pos) const
 {
 	auto colls = gameObject->GetScene()->GetColliders();
 	int size = colls.size();
@@ -341,11 +352,11 @@ bool BoxCollider::CheckCollision(const Vector3& pos) const
 
 		if(CompareBox(pos, off, other_pos, other_off))
 		{
-			return true;
+			return other_obj;
 		}
 	}
 
-	return false;
+	return nullptr;
 }
 
 std::unique_ptr<Component> BoxCollider::copy()

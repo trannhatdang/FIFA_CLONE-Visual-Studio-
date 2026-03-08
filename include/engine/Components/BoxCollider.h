@@ -49,7 +49,7 @@ class BoxCollider : public Component
 		void SetOffset(const BColliderOff& offset);
 		void SetCenter(const Vector3& center);
 		Vector3 CheckPath(const Vector3& pos, const Vector3f& dir);
-		bool CheckCollision(const Vector3& pos) const;
+		GameObject* CheckCollision(const Vector3& pos) const;
 
 		std::unique_ptr<Component> copy();
 };
